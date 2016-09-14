@@ -17,6 +17,8 @@
 #include "motion_control.h"
 #include "system_supervise.h"
 
+u32 DataCount = 0;
+
 /**
 * @brief  初始化
 * @retval 是否成功
@@ -46,6 +48,9 @@ bool NaviPack_RxProcessor(NavipackComm_Type *comm, u8 data)
 */
 bool Navipack_RxCallback(NavipackComm_Type *comm, NaviPack_HeadType *head)
 {
+    ResetHeartbeat();
+    DataCount++;
+    
     switch(head->functionCode)
     {
     case FUNC_ID_READ_STATUS:

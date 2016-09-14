@@ -45,7 +45,6 @@ static u8 CommRxBuffer[NAVIPACK_COMM_SIZE];
 */
 bool Comm_Init(void)
 {
-
     NavipackComm_Type *comm = &NavipackComm;
     comm->rxBuffer = CommRxBuffer;
     comm->txBuffer = CommTxBuffer;
