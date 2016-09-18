@@ -13,7 +13,7 @@
 
 #include "stm32_lib.h"
 
-void TMP_Init(void);
+bool TMP_Init(void);
 u8 TMP_GetTemperature(s32 *pdata);
 u8 TMP_GetConfig(u8 *pdata);
 

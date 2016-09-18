@@ -165,9 +165,11 @@ static void Ultrasonic_DistanceCalc(UltrasonicDataType *data, u8 pin_value)
     if(pin_value == 0)
     {
         distance = pluse_cnt * HALF_V_SOUND / (BASIC_TIM_CNT_FREQ/1000); //距离，毫米
-        if(distance > 0x0FFFF) distance = 0x0FFFF;
-            
-        if(distance == NavipackComm.status.ultrasound[data->currentChannel])
+        if(distance > 0x0FFFF)
+        {
+            distance = 0x0FFFF;
+        }
+        else if(distance == NavipackComm.status.ultrasound[data->currentChannel])
         {
             distance ^= 0x0001;
         }

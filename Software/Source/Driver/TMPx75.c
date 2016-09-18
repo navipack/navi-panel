@@ -26,36 +26,29 @@
 #define ReadBytes(addr, pdata, num) USER_I2C_Mem_Read(I2Cx, TMPX75_ADDRESS7, addr, I2C_MEMADD_SIZE_8BIT, (u8*)(pdata), num, 5)
 #define ReadByte(addr, pdata)       ReadBytes(addr, pdata, 1)
 
-void TMP_Init(void)
+bool TMP_Init(void)
 {
     u16 i, temperature;
     u8 data = 0x60;
     
     SET_ERR(DRV_ERR_TMP_I2C);
     
-    for(i=0; i<100; i++)
+    if(__HAL_I2C_GET_FLAG(I2Cx, I2C_FLAG_BUSY))
     {
-        if(!__HAL_I2C_GET_FLAG(I2Cx, I2C_FLAG_BUSY))
-        {
-            break;
-        }
-        //OSTimeDly(1);
+        return false;
     }
     
-    if(i >= 100)
-    {
-        return;
-    }
-    
-    if(ReadBytes(ADDR_TEMPERATURE, &temperature, 2))
+    if(ReadBytes(ADDR_TEMPERATURE, &temperature, 2) != HAL_OK)
     {
         // Error
-        return;
+        return false;
     }    
     
     CLEAR_ERR(DRV_ERR_TMP_I2C);
     
     WriteByte(ADDR_CONFIGURATION, &data);
+    
+    return true;
 }
 
 u8 TMP_GetTemperature(s32 *pdata)

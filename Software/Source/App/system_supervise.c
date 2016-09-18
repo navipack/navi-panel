@@ -64,21 +64,32 @@ void SystemSuperviseInit(void)
 */
 void SystemSuperviseTask(void)		//100Hz
 {
-    static u8  led_on_cnt = 0;
-    static u8  led_on_times = 0;
-    static u16 hang_cnt = 0;
-    static bool pickup_en;
+    //static bool pickup_en;
     static bool ready = false;
-    static u8 last_collision = 0, last_drop;
-    static bool stop;
+    static u8 tmp_init_flag = 1;
+    static u16 temp_cnt = 0;
     
     //BQ20ZX_Init();
 
     
-    pickup_en = !IsPickUp();
+    //pickup_en = !IsPickUp();
 
 	if(!RunFlag.supervise) return;
     RunFlag.supervise = 0;
+    
+    if(tmp_init_flag)
+    {
+        static u8 tmp_init_cnt = 0;
+        if(TMP_Init())
+        {
+            tmp_init_flag = 0;
+        }
+        else if(tmp_init_cnt++ > 10)
+        {
+            tmp_init_flag = 0;
+        }
+    }
+    
         
     if(!CHECK_ERR(DRV_ERR_IMU))
     {
@@ -134,6 +145,14 @@ void SystemSuperviseTask(void)		//100Hz
             ChassisMotorDriverEnable(true);
             SetCarMotionEnable(true);
         }
+    }
+    
+    // 外部测温
+    if(!CHECK_ERR(DRV_ERR_TMP_I2C) && ++temp_cnt >= SUPERVISE_PREQ/4)
+    {
+        temp_cnt = 0;            
+        
+        TMP_GetTemperature(&GlobalParams.temperature);
     }
     
     // 一秒间隔

@@ -136,8 +136,8 @@ void DriverInit(void)
 #endif
 
     // I2C Battery and Temperature
-    //MX_I2C1_Init();
-    #if 0 // SMBus Init
+    MX_I2C1_Init();
+    #if 1 // SMBus Init
     __HAL_I2C_DISABLE(&hi2c1);
     SET_BIT( hi2c1.Instance->CR1, I2C_CR1_ENARP);
     SET_BIT( hi2c1.Instance->CR1, I2C_CR1_SMBTYPE);
