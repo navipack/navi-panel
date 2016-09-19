@@ -26,6 +26,11 @@
 #define ReadBytes(addr, pdata, num) USER_I2C_Mem_Read(I2Cx, TMPX75_ADDRESS7, addr, I2C_MEMADD_SIZE_8BIT, (u8*)(pdata), num, 5)
 #define ReadByte(addr, pdata)       ReadBytes(addr, pdata, 1)
 
+/**
+* @brief  温度传感器初始化
+* @param  None
+* @retval None
+*/
 bool TMP_Init(void)
 {
     u16 i, temperature;
@@ -50,6 +55,7 @@ bool TMP_Init(void)
     
     return true;
 }
+
 
 u8 TMP_GetTemperature(s32 *pdata)
 {

@@ -71,8 +71,6 @@ void SystemSuperviseTask(void)		//100Hz
     
     //BQ20ZX_Init();
 
-    
-    //pickup_en = !IsPickUp();
 
 	if(!RunFlag.supervise) return;
     RunFlag.supervise = 0;

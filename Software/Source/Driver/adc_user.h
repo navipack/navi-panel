@@ -21,7 +21,7 @@
 #define RANK_REF        4
 #define RANK_TEMP       5
 
-#define RANK_DROP_MAX   6
+#define RANK_DROP_MAX   4
 #define RANK_MAX        8
 
 // ADC 计算相关常数

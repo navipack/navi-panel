@@ -96,6 +96,12 @@ s32 GetOmega(s32 target_w)
 }
 
 s32 MaxOut = SINGLE_MAX*2;
+
+/**
+* @brief  初始化电机PID
+* @param  None
+* @retval None
+*/
 void MotorPIDInit(void)
 {
     static s32 max = PWM_PERIOD;
