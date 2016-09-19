@@ -55,6 +55,7 @@
 #include "Ultrasonic.h"
 #include "comm.h"
 #include "motor.h"
+#include "contact_detection.h"
 
 /* USER CODE END Includes */
 
@@ -187,6 +188,7 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
+        Contact_detection_V();
         
   /* USER CODE END WHILE */
 
