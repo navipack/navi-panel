@@ -56,7 +56,11 @@ bool TMP_Init(void)
     return true;
 }
 
-
+/**
+* @brief  获得温度数据
+* @param  pdata ：所指向数据缓冲区
+* @retval None
+*/
 u8 TMP_GetTemperature(s32 *pdata)
 {
     u8 tmp, ret;
@@ -70,6 +74,11 @@ u8 TMP_GetTemperature(s32 *pdata)
     return ret;
 }
 
+/**
+* @brief  获得温度传感器配置情况
+* @param  pdata ：所指向数据缓冲区
+* @retval None
+*/
 u8 TMP_GetConfig(u8 *pdata)
 {
     return ReadByte(ADDR_CONFIGURATION, pdata);
