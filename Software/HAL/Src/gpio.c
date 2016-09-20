@@ -110,8 +110,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(MPU_6500_INT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PDPin PDPin PDPin */
-  GPIO_InitStruct.Pin = STBYB_1_Pin|STBYB_2_Pin|SHDNB_12_Pin;
+  /*Configure GPIO pins : PDPin PDPin PDPin PD5 */
+  GPIO_InitStruct.Pin = STBYB_1_Pin|STBYB_2_Pin|SHDNB_12_Pin|GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -151,7 +151,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, STBYB_1_Pin|STBYB_2_Pin|SHDNB_12_Pin|UR_PWR_BUTTON_Pin 
-                          |RADAR_PWR_BUTTON_Pin, GPIO_PIN_RESET);
+                          |RADAR_PWR_BUTTON_Pin|GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, S1_Pin|S2_Pin, GPIO_PIN_RESET);
