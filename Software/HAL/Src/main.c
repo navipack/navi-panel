@@ -187,6 +187,9 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
+#ifndef COMM_UART_EN
+        Comm_RxTask();
+#endif
         
   /* USER CODE END WHILE */
 

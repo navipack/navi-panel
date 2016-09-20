@@ -60,7 +60,7 @@ extern NavipackUserType UserReg;
 bool Comm_Init(void);
 bool Comm_PostTxEvent(NaviPack_HeadType *head);
 
-void Comm_RxTask(void *p_arg);
+void Comm_RxTask(void);
 void Comm_TxTask(void);
 void Comm_BoostTask(void);
 
