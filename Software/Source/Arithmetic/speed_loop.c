@@ -10,8 +10,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "speed_loop.h"
-#include "svpwm_types.h"
-#include "svpwm_params.h"
 #include "control_params.h"
 #include "current_params.h"
 #include "global_defines.h"

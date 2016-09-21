@@ -11,7 +11,6 @@
 #ifndef __GLOBAL_DEFINES_H__
 #define __GLOBAL_DEFINES_H__
 
-#include "svpwm_types.h"
 #include "motor.h"
 
 #define BasicTimer          (TIM7)
@@ -46,8 +45,6 @@ typedef struct GlobalParamsTypeStruct
     s32 angularVelocity;
 }GlobalParamsType;
 extern GlobalParamsType GlobalParams;
-
-extern MotorParamsTyp MotorParams[3];
 
 #endif
 /******************* (C) COPYRIGHT 2013 Haviea *****END OF FILE****/

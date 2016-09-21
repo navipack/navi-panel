@@ -321,7 +321,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
     
     if(hcdc == NULL) return USBD_FAIL;
     
-    // 串口开启后延时发送数据
+    // CDC open delay
     if(CDC_Open)
     {
         if(OpenDiffTime < 200)

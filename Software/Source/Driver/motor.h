@@ -19,6 +19,6 @@
 void Motor_Init(void);
 void Motor_Output(u8 idx, s32 out, u8 stop_flag);
 
-extern MotorParamsTyp MotorParams[3];
+extern MotorParamsTyp MotorParams[2];
 
 #endif

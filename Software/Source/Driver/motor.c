@@ -16,30 +16,11 @@
 
 #define PWM(_v) (PWM_PERIOD*(_v)/1000)
 
-#define MT0_PHASE_CHA         (ADC_CHANNEL_2)
-#define MT0_PHASE_CHA_MASK    (u32)((u32)(MT0_PHASE_CHA) << 15)
-
-#define MT0_PHASE_CHB         (ADC_CHANNEL_3)
-#define MT0_PHASE_CHB_MASK    (u32)((u32)(MT0_PHASE_CHB) << 15)
-
-#define MT0_PHASE_CHC         (ADC_CHANNEL_13)
-#define MT0_PHASE_CHC_MASK    (u32)((u32)(MT0_PHASE_CHC) << 15)
-
-#define MT1_PHASE_CHA         (ADC_CHANNEL_12)
-#define MT1_PHASE_CHA_MASK    (u32)((u32)(MT1_PHASE_CHA) << 15)
-
-#define MT1_PHASE_CHB         (ADC_CHANNEL_13)
-#define MT1_PHASE_CHB_MASK    (u32)((u32)(MT1_PHASE_CHB) << 15)
-
-#define MT1_PHASE_CHC         (ADC_CHANNEL_13)
-#define MT1_PHASE_CHC_MASK    (u32)((u32)(MT1_PHASE_CHC) << 15)
-
-MotorParamsTyp MotorParams[3] = 
+MotorParamsTyp MotorParams[2] = 
 {
-    /*ENC_TIMER--PWM_TIMER--EncoderGapNum--PairNum--EncoderDir--PhaseAChannel--PhaseBChannel--PhaseCChannel--PhaseAChannelMask--PhaseBChannelMask--PhaseCChannelMask--SequenceLength--HallEdgePositive--HallEdgeNegative--HallStartUp--ExternalTriggerInject------------State*/
-    {&htim2,     &htim1,    ENCODER_GAP,   4,       0,          MT0_PHASE_CHA, MT0_PHASE_CHB, MT0_PHASE_CHC, MT0_PHASE_CHA_MASK,MT0_PHASE_CHB_MASK,MT0_PHASE_CHC_MASK,0,              0,                0,                0,           &hadc1, 0},
-    {&htim3,     &htim1,    ENCODER_GAP,   4,       1,          MT1_PHASE_CHA, MT1_PHASE_CHB, MT1_PHASE_CHC, MT1_PHASE_CHA_MASK,MT1_PHASE_CHB_MASK,MT1_PHASE_CHC_MASK,0,              0,                0,                0,           &hadc2, 0},
-    {NULL,       NULL,      ENCODER_GAP,   4,       0,          0,             0,             0,             0,                 0,                 0,                 0,              0,                0,                0,           0,      0},     
+    /*ENC_TIMER--PWM_TIMER--EncoderGapNum--PairNum--EncoderDir--SequenceLength--CURR_ADC*/
+    {&htim2,     &htim1,    ENCODER_GAP,   4,       0,          0,              &hadc1},
+    {&htim3,     &htim1,    ENCODER_GAP,   4,       1,          0,              &hadc2},
 };
 
 void Motor_Init(void)

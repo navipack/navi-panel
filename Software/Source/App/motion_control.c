@@ -10,7 +10,6 @@
 
 #include "motion_control.h"
 #include "global_defines.h"
-#include "svpwm_types.h"
 #include "system_supervise.h"
 #include "math.h"
 #include "control_params.h"

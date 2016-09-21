@@ -14,7 +14,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_lib.h"
-#include "svpwm_types.h"
 #include "PID_regulators.h"
 #include "FIR_Filter.h"
 

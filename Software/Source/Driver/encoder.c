@@ -97,7 +97,6 @@ void EncInit(u8 idx)
     {
     case 0: EncInitForChannel0(MotorParams[0].AlignmentAngle);  break;
     case 1: EncInitForChannel1(MotorParams[1].AlignmentAngle);  break;
-    case 2: EncInitForChannel2(MotorParams[2].AlignmentAngle);  break;
     }
 }
 
@@ -124,7 +123,6 @@ void EncResetEncoder(u8 enc_idx, u16 align)
 	}
 
 	MotorParams[enc_idx].EncDecPluse = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
-	MotorParams[enc_idx].EncDecPluse_Speed_Use = MotorParams[enc_idx].EncDecPluse;
 }
 
 #ifdef _DEBUG
