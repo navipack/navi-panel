@@ -13,6 +13,7 @@
 #include "global_defines.h"
 #include "queue.h"
 #include "tim_user.h"
+#include "gpio_user.h"
 
 #define TALK_MAX 1
 #define TALK_MSG_BOX_SIZE 10
@@ -56,6 +57,15 @@ bool Comm_Init(void)
     Queue_Init(&TxQueue, TxQueuePool, sizeof(TxQueuePool), sizeof(TxQueuePool[0]));
     
     NaviPack_Init();
+    
+    if(GetCommMode())
+    {
+        GlobalParams.commMode = COMM_UART;
+    }
+    else
+    {
+        GlobalParams.commMode = COMM_USB;
+    }
 
     return true;
 }
@@ -120,13 +130,16 @@ void Comm_RxTask(void)
 */
 bool Comm_PostTxEvent(NaviPack_HeadType *head)
 {
-#ifdef COMM_UART_EN
-    CommUsart_EnableIT(false);
-    Queue_Put(&TxQueue, head);
-    CommUsart_EnableIT(true);
-#else
-    Queue_Put(&TxQueue, head);
-#endif
+    if(GlobalParams.commMode == COMM_UART)
+    {
+        CommUsart_EnableIT(false);
+        Queue_Put(&TxQueue, head);
+        CommUsart_EnableIT(true);
+    }
+    else
+    {
+        Queue_Put(&TxQueue, head);
+    }
     return true;
 };
 

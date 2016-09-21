@@ -69,3 +69,8 @@ bool IsPickUp(void)
 {
     return false;
 }
+
+bool GetCommMode(void)
+{
+    return HAL_GPIO_ReadPin(COMM_MODE_GPIO_Port, COMM_MODE_Pin) == GPIO_PIN_SET;
+}

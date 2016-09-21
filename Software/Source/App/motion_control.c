@@ -115,141 +115,6 @@ s32 GetOmega()
 }
 
 /**
-* @brief  重设位置环计数器
-* @param  None
-* @retval None
-* @return None
-*/
-void ResetPosLoopCount(void)
-{
-	CntXHz = _xHz_CNT;
-}
-
-/**
-* @brief  处理加速的函数
-* @param  mt_idx rl: 0表示左轮；1表示右轮
-* @retval None
-* @return None
-*/
-u8 EzCANCalcMotoSpeedAccTime(u8 mt_idx)
-{
-#define SPEED_LOOP_FREQ ((s32)2000)
-    
-    //加速环节计算
-	MotorParams[mt_idx].TargetSpeedIncDivisor = (s32)MotorParams[mt_idx].AccPositiveTime * (s32)SPEED_LOOP_FREQ;
-	MotorParams[mt_idx].TargetSpeedIncRemainder = MotorParams[mt_idx].MaxSpeed * 1000 / MotorParams[mt_idx].TargetSpeedIncDivisor;
-	MotorParams[mt_idx].TargetSpeedIncModulus = MotorParams[mt_idx].MaxSpeed * 1000 % MotorParams[mt_idx].TargetSpeedIncDivisor;	
-
-    //减速环节计算
-    MotorParams[mt_idx].TargetSpeedIncDivisor = (s32)MotorParams[mt_idx].AccNegativeTime * (s32)SPEED_LOOP_FREQ;
-	MotorParams[mt_idx].TargetSpeedIncRemainder = MotorParams[mt_idx].MaxSpeed * 1000 / MotorParams[mt_idx].TargetSpeedIncDivisor;
-	MotorParams[mt_idx].TargetSpeedIncModulus = MotorParams[mt_idx].MaxSpeed * 1000 % MotorParams[mt_idx].TargetSpeedIncDivisor;	
-    
-	return 1;
-}
-
-/**
-* @brief  计算全局坐标
-* @param  None
-* @retval None
-* @return None
-*/
-#ifndef DEG2RAD
-#define DEG2RAD(x) ((x) * 0.01745329251994329575)
-#endif
-
-#ifndef RAD2DEG
-#define RAD2DEG(x) ((x) * 57.29577951308232087721)
-#endif
-
-#define M_PI       (float)(3.14159265358979323846)
-
-#define WHEEL_SPAN		(float)(0.28)	//??:m
-#define WHEEL_RADIUS	(float)(0.05)	//??:m
-#define GEAR_RATIO		(float)(14)
-
-#define ENCODER_PLUSE	(int)(500)
-#define MAX_SPEED_FOR_REAL (float)(0.08)	//??:m/s
-#define MAX_SPEED_FOR_MOTOR (int)(200000)	//??:?/s
-
-#define R_TO_M(r)	(int)(((float)r*4.0*ENCODER_PLUSE*GEAR_RATIO)/(2*M_PI*WHEEL_RADIUS))	//?????????????
-#define M_TO_R(m)	(float)((float)m*(2.0*M_PI*WHEEL_RADIUS)/(4*ENCODER_PLUSE*GEAR_RATIO))
-
-extern s32 TestActualVW[4];
-s32 MAX_CONST = 2*MAX_PWM;
-
-/**************************************************************************
-*
-*
-***************************************************************************/
-bool CalculateTheta( const MotionTargetType *first_location, const MotionTargetType *second_location, s32 *theta )
-{
-	s32 distanceX = 0;
-	s32 distanceY = 0;
-	s32 temp_distanceTheta = 0;
-	
-	distanceX = second_location->sAxisX  - first_location->sAxisX;
-	distanceY = second_location->sAxisY  - first_location->sAxisY;
-	
-	temp_distanceTheta = GetAtan(distanceX, distanceY, 1);
-	
-	while( temp_distanceTheta >= DEGREE(360) )
-	{
-		temp_distanceTheta -= DEGREE(360);
-	}
-	while( temp_distanceTheta < 0 )
-	{
-		temp_distanceTheta += DEGREE(360);
-	}
-	
-	*theta = temp_distanceTheta;
-    return true;
-}
-
-
-/**************************************************************************
-* Description    : 生成到达线
-***************************************************************************/
-bool JudgeLineGenerator( const MotionTargetType* present_location, const MotionTargetType* target_location, LineParameter *judge_line )
-{
-    PointCoordinate firstpoint;
-    PointCoordinate secondpoint;
-    LineParameter ligatureline;
-    LineParameter verticalline;
-    
-    firstpoint.x = present_location->sAxisX;
-    firstpoint.y = present_location->sAxisY;
-    secondpoint.x = target_location->sAxisX;
-    secondpoint.y = target_location->sAxisY;
-    
-    ligatureline = CalculateLine( &firstpoint, &secondpoint );
-    verticalline = CalculateVerticalLine( &ligatureline, &secondpoint );
-     
-    *judge_line = verticalline;
-    
-    return true;
-}
-/**
-* @brief  未融合的底盘位姿更新
-* @param  present_location : 位姿数据
-* @param  deltadistance    : 移动距离
-* @param  deltatheta       : 移动角度
-* @retval None
-*/
-void CarLocationUpdate_NoFusion( CDistanceValue* distance, s32 delta_distance, s32 delta_theta)
-{	
-	distance->theta += delta_theta;
-
-    distance->theta %= DEGREE(360);
-    if(distance->theta < 0)
-	{
-		distance->theta += DEGREE(360);
-	}
-    
-    distance->distance += delta_distance;
-}
-
-/**
 * @brief  底盘位姿更新
 * @param  present_location        : 融合位姿数据
 * @param  no_fusion_distance      : 不融合位姿数据
@@ -258,7 +123,7 @@ void CarLocationUpdate_NoFusion( CDistanceValue* distance, s32 delta_distance, s
 * @retval None
 */
 #define W_NOISE_TH  (DEGREE(1)/4)
-void CarLocationUpdate(CDistanceValue* no_fusion_distance, const CSpeedVW *present_speed, s32 period )
+void CarLocationUpdate(CDistanceValue* distance, const CSpeedVW *present_speed, s32 period )
 {
     s32 delta_theta;
     s32 delta_distance = 0;
@@ -281,157 +146,16 @@ void CarLocationUpdate(CDistanceValue* no_fusion_distance, const CSpeedVW *prese
         delta_theta_remainder = delta_theta % 1000000;
         delta_theta /= 1000000;
     }
-    CarLocationUpdate_NoFusion(no_fusion_distance, delta_distance, delta_theta);
-}
-
-
-/**************************************************************************
-*
-*
-***************************************************************************/
-
-bool CalculateDistance( const MotionTargetType *first_location, const MotionTargetType *second_location, s32 *distance )
-{
-	s32 distanceX = 0;
-	s32 distanceY = 0;
-	s64 temp_squrt;
-	
-	distanceX = second_location->sAxisX  - first_location->sAxisX;
-	distanceY = second_location->sAxisY  - first_location->sAxisY;
-	
-	if( distanceX < 0 )
-		distanceX = -distanceX;
-	if( distanceY < 0 )
-		distanceY = -distanceY;
-	temp_squrt = (distanceX/10)*(distanceX/10) + (distanceY/10)*(distanceY/10);
-	*distance = GetSqurt32( temp_squrt )*10;
-	return true;
-}
-
-
-/**************************************************************************
-* Description    : 位置融合
-***************************************************************************/
-#define COR_FULL_BITS       13
-#define COR_FULL_FACTOR     (1<<COR_FULL_BITS)
-// 位移代替除法计算，并保留除法余数
-#define FUSION_DIVISION(value, result, remainder) do{\
-    if((value) < 0) {\
-        (result) = ((value) >> COR_FULL_BITS) + 1;\
-        (remainder) = (s32)(value) | (~(s32)(COR_FULL_FACTOR-1));\
-    } else {\
-        (result) = ((value) >> COR_FULL_BITS);\
-        (remainder) = (s32)(value) & (s32)(COR_FULL_FACTOR-1);\
-    }\
-}while(0)
-bool CorrectionCarLocation( const MotionTargetType *correct_location, MotionTargetType *present_location, s32 fusion_factor_xy, s32 fusion_factor_phi)
-{
-	s32 temp_CORrandian;
-	s32 temp_PRErandian;
-	s32 theta;
-    s64 tmp;
-    static s32 remainder_x, remainder_y, remainder_phi;
     
-    temp_CORrandian = correct_location->sTheta;
-    temp_PRErandian = present_location->sTheta;
-    
-    if( abs( temp_CORrandian - temp_PRErandian ) > DEGREE(180) )
-    {
-        if( temp_CORrandian > temp_PRErandian )
-        {
-            temp_PRErandian = temp_PRErandian + DEGREE(360);
-        }
-        else
-        {
-            temp_CORrandian = temp_CORrandian + DEGREE(360);
-        }
-    }
-    
-    tmp = ((s64)temp_PRErandian * (COR_FULL_FACTOR - fusion_factor_phi) + (s64)temp_CORrandian * fusion_factor_phi ) + remainder_phi;
-    theta = tmp >> COR_FULL_BITS;
-    remainder_phi = (s32)tmp & (s32)(COR_FULL_FACTOR-1);
-    
-    while(theta > DEGREE(360))
-    {
-        theta -= DEGREE(360);
-    }
-    present_location->sTheta = theta;
-    
-    tmp = (s64)present_location->sAxisX * (COR_FULL_FACTOR - fusion_factor_xy) + (s64)correct_location->sAxisX * fusion_factor_xy + remainder_x;
-    FUSION_DIVISION(tmp, present_location->sAxisX, remainder_x);
-    tmp = (s64)present_location->sAxisY * (COR_FULL_FACTOR - fusion_factor_xy) + (s64)correct_location->sAxisY * fusion_factor_xy + remainder_y;
-    FUSION_DIVISION(tmp, present_location->sAxisY, remainder_y);
-        
-	return true;	
-}
+    distance->theta += delta_theta;
 
-/**************************************************************************
-*
-*localization fusion
-*
-* theta:	1° = 4096
-***************************************************************************/
-typedef struct{
-	s32 delta_x;
-	s32 delta_y;
-	s32 delta_phi;
-} DELTA_POSE;
-
-#define GYRO_W_TH   										3500
-#define GYRO_ACC_W_TH   									4000
-#define SLAM_DELTA_PHI_TH   								DEGREE(10)//0-360
-#define SLAM_DELTA_X_TH   									200 //unit :mm
-#define SLAM_DELTA_Y_TH   									200 //unint :mm
-#define ST_SLAM_DIF_TH   									12
-#define LF_ZERO   											120
-#define GYRO_PERIOD   										50//50/250 = 200ms
-#define DELTA_ORIGINAL_ST_POSE_PERIOD   					50
-#define DELAY_FOR_SLAM_RECOVERY_TIME   						250*2
-#define DELAY_FOR_BRAKE_RECOVERY_TIME   					125
-#define AVG_FILTER_TAP 										5
-
-/**************************************************************************
-*
-*
-***************************************************************************/
-bool LinearVelocityGenerator( s32 setvalue, s32 *presentmax )
-{
-	static s32 velocity_inc = BasicVelocityInc;
-	static s32 velocity_max = LocationLoopV_Max;
-	
-	if( setvalue < 0 )//special decreasing
+    distance->theta %= DEGREE(360);
+    if(distance->theta < 0)
 	{
-		velocity_inc = -( setvalue<<1 );
-		if( *presentmax > 0 )
-		{
-			*presentmax -= velocity_inc;
-			if( *presentmax < 0 )
-				*presentmax = 0;
-		}
+		distance->theta += DEGREE(360);
 	}
-	else if( setvalue >= 0 )
-	{
-		velocity_inc = BasicVelocityInc;
-		velocity_max = LocationLoopV_Max * setvalue / 100;
-		if( *presentmax < velocity_max )
-		{
-			*presentmax += velocity_inc;
-			if( *presentmax > velocity_max )
-			{
-				*presentmax = velocity_max;
-			}
-		}
-		else if( *presentmax > velocity_max )
-		{
-			*presentmax -= velocity_inc;
-			if( *presentmax < 0 )
-			{
-				*presentmax = 0;
-			}
-		}
-	}
-	
-	return true;
+    
+    distance->distance += delta_distance;
 }
 
 /**************************************************************************
@@ -449,10 +173,10 @@ s32 Max_V = LocationLoopV_Max;
 */
 void SetVWValue(s32 v, s32 w, u16 t)
 {
-    if(v == 0 && w != 0 && abs(w) < 150)
-    {
-        w = ((w >> 8) | 0x01) * 150;
-    }
+//    if(v == 0 && w != 0 && abs(w) < 150)
+//    {
+//        w = ((w >> 8) | 0x01) * 150;
+//    }
     
     VWTModeSpeed.sV = v;
     VWTModeSpeed.sW = w;
@@ -581,6 +305,10 @@ void ChassisMovingController()
         target_VW.sV = VWTModeSpeed.sV;
         target_VW.sW = VWTModeSpeed.sW;
     }
+    
+    	
+    GlobalParams.lineVelocity = GetVelocity();
+    GlobalParams.angularVelocity = GetOmega();
     
     present_vw.sV = GlobalParams.lineVelocity;
     present_vw.sW = GlobalParams.angularVelocity;

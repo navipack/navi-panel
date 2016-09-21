@@ -108,31 +108,7 @@ typedef struct MotorParamsTypStruct
     s64 PresentPosition;//		(EzCANServoParams.Status.NowPosition)
     RotorVoltageTyp PresentVoltageDQ;//	(*(RotorVoltageTyp*)&EzCANServoParams.Status.NowVoltageDQ)
 
-    //======目标控制值======//
-    RotorCurrentTyp TargetCurrentDQ;//		(*(RotorCurrentTyp*)&EzCANServoParams.Control.TargetCurrent)
-    s64 TargetPosition;//		(EzCANServoParams.Control.TargetPosition)
-    s32 TargetSpeed;//			(EzCANServoParams.Control.TargetSpeed)
-    RotorVoltageTyp TargetVoltageDQ;//		(*(RotorVoltageTyp*)&EzCANServoParams.Control.TargetVoltage)
-
-    //上次目标位置-------------------------------------------------//
-	s64 LastTargetPos;			//上次目标位置，位置环电子齿轮时用到
     
-	//速度环加减速参数---------------------------------------------//
-	s32 TargetSpeedIncRemainder;	//目标速度增量的余数
-	s32 TargetSpeedIncModulus;		//目标速度增量的模数
-	s32 TargetSpeedDecRemainder;	//目标速度减少的余数
-	s32 TargetSpeedDecModulus;		//目标速度减少的模数
-	s32 TargetSpeedIncDivisor;		//目标速度增加的除数，用于累加
-	s32 TargetSpeedDecDivisor;		//目标速度减少的除数
-
-   	//速度环滤波参数-----------------------------------------------//
-	s32 SpeedFeedbackFilterParam;		//速度反馈滤波
-	s32 SpeedFeedForwardFilterParam;	//速度前馈滤波
-    u8  SpeedFIRFilterLevel;			//速度环FIR滤波器等级
-
-	//转矩环滤波参数-----------------------------------------------//
-	s32 TorqueFeedbackFilterParam;		//转矩反馈滤波
-	s32 TorqueFeedForwardFilterParam;	//转矩前馈滤波
 
 	//电机初始化参数-----------------------------------------------//
 	u8  FinishRecognize;				//完成电机识别

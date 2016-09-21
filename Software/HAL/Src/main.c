@@ -55,6 +55,7 @@
 #include "Ultrasonic.h"
 #include "comm.h"
 #include "motor.h"
+#include "global_defines.h"
 
 /* USER CODE END Includes */
 
@@ -127,13 +128,16 @@ void DriverInit(void)
 
     // Lidar Communication
     Comm_Init();
-#ifdef COMM_UART_EN
-    MX_USART3_UART_Init();
-    CommUsart_Init(&huart3);
-#else
-    // USB
-    MX_USB_DEVICE_Init();
-#endif
+    if(GlobalParams.commMode == COMM_UART)
+    {
+        MX_USART3_UART_Init();
+        CommUsart_Init(&huart3);
+    }
+    else
+    {
+        // USB
+        MX_USB_DEVICE_Init();
+    }
 
     // I2C Battery and Temperature
     MX_I2C1_Init();
@@ -187,9 +191,10 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-#ifndef COMM_UART_EN
-        Comm_RxTask();
-#endif
+        if(GlobalParams.commMode == COMM_USB)
+        {
+            Comm_RxTask();
+        }
         
   /* USER CODE END WHILE */
 

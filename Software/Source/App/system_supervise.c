@@ -148,12 +148,12 @@ void SystemSuperviseTask(void)		//100Hz
     }
     
     // 外部测温
-    if(!CHECK_ERR(DRV_ERR_TMP_I2C) && ++temp_cnt >= SUPERVISE_PREQ/4)
-    {
-        temp_cnt = 0;            
-        
-        TMP_GetTemperature(&GlobalParams.temperature);
-    }
+//    if(!CHECK_ERR(DRV_ERR_TMP_I2C) && ++temp_cnt >= SUPERVISE_PREQ/4)
+//    {
+//        temp_cnt = 0;            
+//        
+//        TMP_GetTemperature(&GlobalParams.temperature);
+//    }
     
     // 一秒间隔
     if(RunFlag.second)

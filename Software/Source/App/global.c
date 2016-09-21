@@ -10,4 +10,6 @@
 
 #include "global_defines.h"
 
-GlobalParamsType GlobalParams = {0};
+GlobalParamsType GlobalParams = {
+    .errStatus = 0
+};

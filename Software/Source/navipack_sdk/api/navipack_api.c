@@ -16,6 +16,7 @@
 #include "comm.h"
 #include "motion_control.h"
 #include "system_supervise.h"
+#include "global_defines.h"
 
 u32 DataCount = 0;
 
@@ -103,11 +104,14 @@ bool NaviPack_TxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head)
 bool Navipack_TxCallback(u8* pbuf, u16 len)
 {
     // 实际数据发送
-#ifdef COMM_UART_EN
-    return CommUsart_SendData(pbuf, len);
-#else
-    return CDC_TransmitData(pbuf, len) == USBD_OK;
-#endif
+    if(GlobalParams.commMode == COMM_UART)
+    {
+        return CommUsart_SendData(pbuf, len);
+    }
+    else
+    {
+        return CDC_TransmitData(pbuf, len) == USBD_OK;
+    }
 }
 
 /**

@@ -30,8 +30,12 @@
 #define SET_ERR(_ERR) (GlobalParams.errStatus |= (_ERR))
 #define CLEAR_ERR(_ERR) (GlobalParams.errStatus &= ~(_ERR))
 
+#define COMM_UART   0
+#define COMM_USB    1  
+
 typedef struct GlobalParamsTypeStruct
 {
+    u8 commMode;
     u32 errStatus;
     u32 lastTimCnt;         ///< 计时 Count 保存
     u32 lastCaptureCnt;     ///< 计时溢出 Count 保存

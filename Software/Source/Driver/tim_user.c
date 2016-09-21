@@ -118,7 +118,4 @@ void BasicTIM_IRQHandler(TIM_HandleTypeDef *htim)
         MotorParams[cnt4].AccumulatedDistance += encoder_delta / V_FULL_FACTOR;
         MotorParams[cnt4].AccumulatedDistanceRemainder = encoder_delta % V_FULL_FACTOR;
     }
-	
-    GlobalParams.lineVelocity = GetVelocity();
-    GlobalParams.angularVelocity = GetOmega();
 }
