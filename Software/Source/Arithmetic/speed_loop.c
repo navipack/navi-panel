@@ -10,8 +10,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "speed_loop.h"
-#include "control_params.h"
-#include "current_params.h"
 #include "global_defines.h"
 #include "FIR_Filter.h"
 #include <math.h>

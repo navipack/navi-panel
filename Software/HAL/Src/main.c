@@ -185,13 +185,13 @@ int main(void)
     while (1)
     {
         RunFlagHandler();
+        Comm_RxTask();
+        MotionCtrlTask();
         SensorUpdateTask();
         SystemSuperviseTask();
-        MotionCtrlTask();
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-        Comm_RxTask();
         
   /* USER CODE END WHILE */
 

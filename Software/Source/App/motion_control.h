@@ -18,17 +18,7 @@
 #include "motor.h"
 #include "math_lib.h"
 
-//#define USE_REMOTE_CONTROL
-
-#define LocationLoopV_Max       800 // mm/s
-#define LocationLoopW_Max       DEGREE(180)
-#define ReachNearerLocation     100 // mm
-#define ReachFartherLocation    300 // mm
-#define ReachAligmentTheta      DEGREE(5)
-
-//increase 500 times per sec.
-#define BasicVelocityInc 800/500
-#define BasicAngularVelocityInc DEGREE(120)/500
+#define MOTION_PREQ       1000      //速度环频率
 
 typedef enum ShellyMotoLoopModeTypEnum
 {

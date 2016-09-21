@@ -10,7 +10,6 @@
 
 /* Standard include ----------------------------------------------------------*/
 
-#include "control_params.h"
 #include "PID_regulators.h"
 #include "global_defines.h"
 

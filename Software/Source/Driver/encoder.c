@@ -12,7 +12,6 @@
 #include "stm32_lib.h"
 //#include "bsp.h"
 #include "Encoder.h"
-#include "control_params.h"
 #include "global_defines.h"
 #include "speed_loop.h"
 #include "FIR_Filter.h"

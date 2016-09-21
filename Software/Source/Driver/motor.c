@@ -9,8 +9,6 @@
 */
 
 #include "motor.h"
-#include "control_params.h"
-#include "current_params.h"
 #include "global_defines.h"
 #include "adc_user.h"
 

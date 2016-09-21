@@ -12,8 +12,6 @@
 #include "global_defines.h"
 #include "system_supervise.h"
 #include "math.h"
-#include "control_params.h"
-#include "current_params.h"
 #include "Queue.h"
 #include "math_lib.h"
 #include "gpio_user.h"
@@ -157,12 +155,6 @@ void CarLocationUpdate(CDistanceValue* distance, const CSpeedVW *present_speed, 
     distance->distance += delta_distance;
 }
 
-/**************************************************************************
-*
-*
-***************************************************************************/
-s32 Max_V = LocationLoopV_Max;
-
 /**
 * @brief  设置VW模式的速度值
 * @param  v: 线速度
@@ -282,21 +274,15 @@ bool IsWheelRest()
 //static u8 PlatMode = MOTION_VW_MODE;
 void ChassisMovingController()
 {
-    static u16 cnt = 0, cor_cnt = 0, stop_cnt = 0;
-    static u8 origin_zone_flag;
-    static CTwoDistance two_target_distance;
-    static CTwoCarLocation two_target_location;
-    static LineParameter arrive_judge_line;
-    static bool is_queue_reset, is_protect = false;
-    static CDistanceValue no_fusion_distance = {0,0};
+    static u16 stop_cnt = 0;
+    static bool is_protect = false;
+    static CDistanceValue present_posture = {0,0};
     static CSpeedVW present_vw = {0,0};
     static CSpeedVW target_VW = {0,0};
     static NaviPack_StatusType* status = &NavipackComm.status;
     
-    bool same_dir;
-    
     // 车当前位姿更新
-    CarLocationUpdate(&no_fusion_distance, &present_vw, 1000000/MOTION_PREQ);
+    CarLocationUpdate(&present_posture, &present_vw, 1000000/MOTION_PREQ);
    
     if(VW_Update && !is_protect)
     {
@@ -315,7 +301,7 @@ void ChassisMovingController()
     // 通讯反馈
     if(Navipack_LockReg(REG_ID_STATUS))
     {
-        status->angularPos = DEGREE_TO_RADIAN(no_fusion_distance.theta);
+        status->angularPos = DEGREE_TO_RADIAN(present_posture.theta);
         status->leftEncoderPos = MotorParams[0].AccumulatedDistance;
         status->rightEncoderPos = MotorParams[1].AccumulatedDistance;
         status->lineVelocity = present_vw.sV;

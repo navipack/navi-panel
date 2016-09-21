@@ -12,12 +12,9 @@
 #include <string.h>
 #include "system_supervise.h"
 #include "global_defines.h"
-#include "control_params.h"
 #include "sensor_update.h"
-//#include "ShellyTalkInternal.h"
 #include "motion_control.h"
 #include "TMPx75.h"
-//#include "lidar.h"
 #include "comm.h"
 
 #include "tim_user.h"

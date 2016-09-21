@@ -13,7 +13,6 @@
 #include "Encoder.h"
 #include "speed_loop.h"
 #include "global_defines.h"
-#include "control_params.h"
 #include "motion_control.h"
 
 #define TICK_FREQ   1000
