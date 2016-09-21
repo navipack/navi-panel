@@ -109,8 +109,8 @@ extern CCarLocation gCPresentLocation;
 
 void MotorParamsInit(void);
 void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega);
-s32 GetVelocity(s32 target_v);
-s32 GetOmega(s32 target_w);
+s32 GetVelocity(void);
+s32 GetOmega(void);
 void EncInit(u8);
 void MotorPIDInit(void);
 

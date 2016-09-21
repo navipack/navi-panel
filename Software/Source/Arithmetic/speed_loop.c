@@ -16,13 +16,9 @@
 #include "current_params.h"
 #include "global_defines.h"
 #include "FIR_Filter.h"
-//#include "bsp.h"
-//#include "bsp_usr.h"
 #include <math.h>
 #include "sensor_update.h"
 #include "motion_control.h"
-//#include "ShellyTalkInternal.h"
-#include "AVG_filter.h"
 #include "comm.h"
 #include "adc_user.h"
 #include "PID_regulators.h"
@@ -40,60 +36,6 @@ static PIDObjTyp SpeedLoopVPID;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
-/**
-* @brief  一阶滞后融合滤波
-* @param  target_value   : 本次采样值
-* @param  sample_value   : 上次滤波结果
-* @param  factor         : 滞后程度  
-* @retval None
-*/
-s32 FirstFilterS32(s32 target_value, s32 sample_value, s16 factor)
-{    
-    return ((s64)target_value * factor + (s64)sample_value * (1000 - factor))/1000;    
-}
-
-/**
-* @brief  获得线速度
-* @param  target_v: 目标线速度，用来预估检测值
-* @retval 线速度，单位：mm/s
-*/
-s32 FMVASpeedFilterArray[3][32];
-AvgFilterInt32Def FMVASpeedFilter[3] = {
-    {FMVASpeedFilterArray[0], 32, 0, 0},
-    {FMVASpeedFilterArray[1], 32, 0, 0},
-    {FMVASpeedFilterArray[2], 32, 0, 0},
-};
-
-s32 GetVelocity(s32 target_v)
-{
-    s64 velocity;
-    
-    velocity = AVG_Filter_s32(&FMVASpeedFilter[0], 
-        (MotorParams[0].PresentSpeed + MotorParams[1].PresentSpeed) / 2);
-
-    return V_ENC_TO_MM(velocity); //脉冲每秒换算成毫米每秒
-
-}
-
-/**
-* @brief  获得角速度
-* @param  target_w: 目标角速度，用来预估检测值
-* @retval 角速度，单位：倍乘角度，相关宏 DEGREE()
-*/
-s32 GetOmega(s32 target_w)
-{
-    static s32 s_last_target_w = 0;
-    s32 omega;
-    
-	omega = AVG_Filter_s32(&FMVASpeedFilter[1], g_SensorSystemStatus.yaw_anglerate);
-    
-    omega = FirstFilterS32(s_last_target_w, omega, 10);
-
-    s_last_target_w = target_w;
-    
-    return omega;
-}
 
 s32 MaxOut = SINGLE_MAX*2;
 void MotorPIDInit(void)
@@ -224,5 +166,4 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     
     Motor_Output(0, left_out, stop_flag);
     Motor_Output(1, right_out, stop_flag);
-
 }

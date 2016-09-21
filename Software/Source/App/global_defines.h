@@ -37,6 +37,9 @@ typedef struct GlobalParamsTypeStruct
     u32 lastCaptureCnt;     ///< 计时溢出 Count 保存
     s32 temperature;        ///< 环境温度
     s32 temperature_in;     ///< 芯片内部温度
+    
+    s32 lineVelocity;
+    s32 angularVelocity;
 }GlobalParamsType;
 extern GlobalParamsType GlobalParams;
 

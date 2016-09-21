@@ -14,6 +14,7 @@
 #include "speed_loop.h"
 #include "global_defines.h"
 #include "control_params.h"
+#include "motion_control.h"
 
 #define TICK_FREQ   1000
 #define BasicTimer  (TIM7)
@@ -112,12 +113,12 @@ void BasicTIM_IRQHandler(TIM_HandleTypeDef *htim)
         //获得当前脉冲速度
         EncGetMachanicalSpeed(cnt4, &MotorParams[cnt4].PresentSpeed, &encoder_delta);
 
-        // 105982 = 708
-        // 106573 = 704
         // 计算积累移动距离
         encoder_delta = encoder_delta * V_FACTOR + MotorParams[cnt4].AccumulatedDistanceRemainder;
         MotorParams[cnt4].AccumulatedDistance += encoder_delta / V_FULL_FACTOR;
         MotorParams[cnt4].AccumulatedDistanceRemainder = encoder_delta % V_FULL_FACTOR;
     }
 	
+    GlobalParams.lineVelocity = GetVelocity();
+    GlobalParams.angularVelocity = GetOmega();
 }

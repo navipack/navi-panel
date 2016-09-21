@@ -18,11 +18,12 @@
 #include "Queue.h"
 #include "math_lib.h"
 #include "gpio_user.h"
-//#include "ShellyTalkInternal.h"
 #include "sensor_update.h"
 #include "comm.h"
 #include "infrared_drop.h"
 #include "tim_user.h"
+#include "speed_loop.h"
+#include "AVG_filter.h"
 
 #define FREQ(cnt,hz)  (++(cnt) >= MOTION_PREQ/(hz))
 
@@ -69,21 +70,48 @@ void MotorParamsInit(void)
 }
 
 /**
-* @brief  初始化所有三个编码器和霍尔等设备
-* @param  None
-* @retval None
-* @return None
+* @brief  一阶滞后融合滤波
+* @param  target_value   : 目标值
+* @param  sample_value   : 采样值
+* @param  factor         : 滞后程度
+* @retval 结果
 */
-void MotionInitEncoderAndHall(void)
-{
-    u8 i;
-    //for(i=0; i<3; i++)
-    //for(i=0; i<2; i++)
-    //    EncInit(i);
+s32 FirstFilterS32(s32 target_value, s32 sample_value, s16 factor)
+{    
+    return ((s64)target_value * factor + (s64)sample_value * (1000 - factor))/1000;    
+}
 
-	//HallIrqInit();
+/**
+* @brief  获得线速度
+* @param  target_v: 目标线速度，用来预估检测值
+* @retval 线速度，单位：mm/s
+*/
+s32 FMVASpeedFilterArray[3][32];
+AvgFilterInt32Def FMVASpeedFilter[3] = {
+    {FMVASpeedFilterArray[0], 32, 0, 0},
+    {FMVASpeedFilterArray[1], 32, 0, 0},
+    {FMVASpeedFilterArray[2], 32, 0, 0},
+};
+
+s32 GetVelocity()
+{
+    s64 velocity;
     
-    EncInit(0);
+    velocity = AVG_Filter_s32(&FMVASpeedFilter[0], 
+        (MotorParams[0].PresentSpeed + MotorParams[1].PresentSpeed) / 2);
+
+    return V_ENC_TO_MM(velocity); //脉冲每秒换算成毫米每秒
+
+}
+
+/**
+* @brief  获得角速度
+* @param  target_w: 目标角速度，用来预估检测值
+* @retval 角速度，单位：倍乘角度，相关宏 DEGREE()
+*/
+s32 GetOmega()
+{
+    return AVG_Filter_s32(&FMVASpeedFilter[1], g_SensorSystemStatus.yaw_anglerate);
 }
 
 /**
@@ -225,14 +253,12 @@ void CarLocationUpdate_NoFusion( CDistanceValue* distance, s32 delta_distance, s
 * @brief  底盘位姿更新
 * @param  present_location        : 融合位姿数据
 * @param  no_fusion_distance      : 不融合位姿数据
-* @param  no_fusion_sync_distance : 不融合位姿数据，可被重置
 * @param  present_speed           : 速度
 * @param  period                  : 周期时间，单位微秒
 * @retval None
 */
 #define W_NOISE_TH  (DEGREE(1)/4)
-void CarLocationUpdate(CDistanceValue* no_fusion_distance, CDistanceValue* no_fusion_sync_distance, 
-    const CSpeedVW *present_speed, s32 period )
+void CarLocationUpdate(CDistanceValue* no_fusion_distance, const CSpeedVW *present_speed, s32 period )
 {
     s32 delta_theta;
     s32 delta_distance = 0;
@@ -256,7 +282,6 @@ void CarLocationUpdate(CDistanceValue* no_fusion_distance, CDistanceValue* no_fu
         delta_theta /= 1000000;
     }
     CarLocationUpdate_NoFusion(no_fusion_distance, delta_distance, delta_theta);
-    CarLocationUpdate_NoFusion(no_fusion_sync_distance, delta_distance, delta_theta);
 }
 
 
@@ -541,17 +566,14 @@ void ChassisMovingController()
     static LineParameter arrive_judge_line;
     static bool is_queue_reset, is_protect = false;
     static CDistanceValue no_fusion_distance = {0,0};
-    static CDistanceValue no_fusion_sync_distance = {0,0};
     static CSpeedVW present_vw = {0,0};
     static CSpeedVW target_VW = {0,0};
     static NaviPack_StatusType* status = &NavipackComm.status;
     
     bool same_dir;
     
-    // 强制设置位置
-    //GetForcePresentLocation(&present_location, &no_fusion_sync_distance);
     // 车当前位姿更新
-    CarLocationUpdate(&no_fusion_distance, &no_fusion_sync_distance, &present_vw, 1000000/MOTION_PREQ);
+    CarLocationUpdate(&no_fusion_distance, &present_vw, 1000000/MOTION_PREQ);
    
     if(VW_Update && !is_protect)
     {
@@ -560,8 +582,8 @@ void ChassisMovingController()
         target_VW.sW = VWTModeSpeed.sW;
     }
     
-    present_vw.sV = GetVelocity(target_VW.sV);
-    present_vw.sW = GetOmega(target_VW.sW);
+    present_vw.sV = GlobalParams.lineVelocity;
+    present_vw.sW = GlobalParams.angularVelocity;
     
     // 通讯反馈
     if(Navipack_LockReg(REG_ID_STATUS))
@@ -574,19 +596,19 @@ void ChassisMovingController()
         Navipack_UnlockReg(REG_ID_STATUS);
     }
 
-#ifdef _DEBUG
-    if(UserReg.debugFlag & 0x02)
-    {
-        is_protect = false;
-    }
-    else if(FREQ(stop_cnt, 500))
-#else
-    if(FREQ(stop_cnt, 500))
-#endif
-    {
-        stop_cnt = 0;
-        is_protect = DropAndCollisionSensorHandler(&target_VW, 300); // 碰撞及跌落传感器触发刹车策略
-    }
+//#ifdef _DEBUG
+//    if(UserReg.debugFlag & 0x02)
+//    {
+//        is_protect = false;
+//    }
+//    else if(FREQ(stop_cnt, 500))
+//#else
+//    if(FREQ(stop_cnt, 500))
+//#endif
+//    {
+//        stop_cnt = 0;
+//        is_protect = DropAndCollisionSensorHandler(&target_VW, 300); // 碰撞及跌落传感器触发刹车策略
+//    }
     
     if(!CarMotionEnable && !is_protect)
     {
@@ -605,7 +627,7 @@ void ChassisMovingController()
 */
 void MotionCtrlTask(void)
 {
-    static u8 motor_enable_flag = 1;
+    static u8 motor_enable_flag = 1, drop_init_flag = 1;
     static u16 drop_init_cnt = 0;
     
     if(!RunFlag.motion) return;
@@ -618,19 +640,20 @@ void MotionCtrlTask(void)
         ChassisMotorDriverEnable( true );
     }
     
-    if(drop_init_cnt < 500)
-    {            
-        InfraredDrop_InitData(true);
-        drop_init_cnt++;
-    }
-    else if(drop_init_cnt == 500)
+    if(drop_init_flag)
     {
-        InfraredDrop_InitData(false);
-        drop_init_cnt++;
+        if(drop_init_cnt < 500)
+        {            
+            InfraredDrop_InitData(true);
+            drop_init_cnt++;
+            return;
+        }
+        else
+        {
+            InfraredDrop_InitData(false);
+            drop_init_flag = 0;
+        }
     }
-    else
-    {
-        ChassisMovingController();
-    }
-    
+
+    ChassisMovingController();
 }
