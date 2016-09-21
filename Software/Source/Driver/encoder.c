@@ -227,7 +227,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
 * @retval Return motor speed in 0.1 Hz resolution. This routine 
           will return the average mechanical speed of the motor.
 */
-void EncGetMachanicalSpeed(u8 enc_idx, s32* feedback_spd, s32* observe_spd)
+void EncGetMachanicalSpeed(u8 enc_idx, s32* p_encoder_speed, s32* p_encoder_delta)
 {	 
 	s32 wtemp1, wtemp2;
 
@@ -235,13 +235,13 @@ void EncGetMachanicalSpeed(u8 enc_idx, s32* feedback_spd, s32* observe_spd)
 
 	if(MotorParams[enc_idx].EncoderDir == 0)
 	{
-		*feedback_spd = wtemp1;
-		*observe_spd = wtemp2;
+		*p_encoder_speed = wtemp1;
+		*p_encoder_delta = wtemp2;
 	}
 	else
 	{
-		*feedback_spd = -wtemp1;
-		*observe_spd = -wtemp2;
+		*p_encoder_speed = -wtemp1;
+		*p_encoder_delta = -wtemp2;
 	}
 }
 

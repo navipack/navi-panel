@@ -26,7 +26,7 @@ void Encoder_IRQHandler(u8 index);
 void EncInit(u8);
 void EncClearSpeedBuffer(u8);
 void EncResetEncoder(u8, u16);
-void EncGetMachanicalSpeed(u8, s32* feedback_spd, s32* observe_spd);
+void EncGetMachanicalSpeed(u8, s32* p_encoder_speed, s32* p_encoder_delta);
 bool EncErrorOnFeedback(u8);
 
 #endif  /*__STM32F10x_ENCODER_H*/
