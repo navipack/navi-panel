@@ -366,11 +366,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
 uint8_t CDC_TransmitData(uint8_t* pbuf, uint16_t len)
 {
-    if(CDC_Transmit_FS(pbuf, len) == USBD_OK)
-    {
-        return USBD_OK;
-    }
-    return USBD_BUSY;
+    return CDC_Transmit_FS(pbuf, len);
 }
 
 uint8_t CDC_ReceiveData(uint8_t **pbuf, uint32_t *plen)

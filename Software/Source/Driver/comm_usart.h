@@ -16,6 +16,7 @@
 void CommUsart_Init(UART_HandleTypeDef *huart);
 u8 CommUsart_SendData(u8 *data, u16 len);
 bool CommUsart_CanSendData(void);
+bool CommUsart_RecvData(u8 **pbuf, u32* plen);
 void CommUsart_EnableIT(bool en);
 
 #endif

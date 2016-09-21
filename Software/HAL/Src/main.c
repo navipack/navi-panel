@@ -191,10 +191,7 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-        if(GlobalParams.commMode == COMM_USB)
-        {
-            Comm_RxTask();
-        }
+        Comm_RxTask();
         
   /* USER CODE END WHILE */
 

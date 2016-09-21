@@ -89,7 +89,7 @@ void Comm_TxTask(void)
 {
     NaviPack_HeadType head;
     
-    if(Queue_Query(&TxQueue, &head) && CommUsart_CanSendData())
+    if(Queue_Query(&TxQueue, &head))
     {
         if(NaviPack_TxProcessor(&NavipackComm, &head))
         {
@@ -109,17 +109,25 @@ void Comm_RxTask(void)
     u32 len, i;
     NaviPack_HeadType head;
     
-    if(CDC_ReceiveData(&data, &len) != USBD_OK)
+    if(GlobalParams.commMode == COMM_UART)
     {
-        return;
+        if(CommUsart_RecvData(&data, &len))
+        {
+            for(i=0; i<len; i++)
+            {
+                Comm_RecvPackage(data[i]);
+            }
+        }
     }
-    
-    for(i=0; i<len; i++)
+    else if(CDC_ReceiveData(&data, &len) == USBD_OK)
     {
-        Comm_RecvPackage(data[i]);
-    }
+        for(i=0; i<len; i++)
+        {
+            Comm_RecvPackage(data[i]);
+        }
     
-    CDC_StartReceiveData();
+        CDC_StartReceiveData();
+    }
 }
 
 /**
@@ -130,16 +138,7 @@ void Comm_RxTask(void)
 */
 bool Comm_PostTxEvent(NaviPack_HeadType *head)
 {
-    if(GlobalParams.commMode == COMM_UART)
-    {
-        CommUsart_EnableIT(false);
-        Queue_Put(&TxQueue, head);
-        CommUsart_EnableIT(true);
-    }
-    else
-    {
-        Queue_Put(&TxQueue, head);
-    }
+    Queue_Put(&TxQueue, head);
     return true;
 };
 

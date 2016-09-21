@@ -29,10 +29,11 @@ void CommUsart_Init(UART_HandleTypeDef *huart)
     
     TxTcFlag = __HAL_DMA_GET_TC_FLAG_INDEX(huart->hdmatx);
     
-    __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
-    
     __HAL_UART_CLEAR_OREFLAG(huart);
-    __HAL_UART_ENABLE(huart);
+    //__HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
+    //__HAL_UART_ENABLE(huart);
+    HAL_DMA_Start(huart->hdmarx, (u32)&huart->Instance->DR, (u32)UartBuffer, UART_BUFF_SIZE);
+    huart->Instance->CR3 |= USART_CR3_DMAR;
 }
 
 /**
@@ -62,6 +63,34 @@ bool CommUsart_CanSendData(void)
         SendIdle = true;
     }
     return SendIdle;
+}
+
+/**
+* @brief  通讯串口接收数据
+* @param  pbuf : 返回接收到的数据指针
+* @param  plen : 返回接收到的数据长度
+* @retval 是否有数据
+*/
+bool CommUsart_RecvData(u8 **pbuf, u32* plen)
+{
+    static u32 offset = 0;
+    
+    u16 data_cnt = UART_BUFF_SIZE - __HAL_DMA_GET_COUNTER(COMM_UART->hdmarx);
+    *pbuf = &UartBuffer[offset];
+    if(data_cnt < offset)
+    {
+        *plen = UART_BUFF_SIZE - offset;
+        offset = 0;
+    }
+    else
+    {
+        *plen = data_cnt - offset;
+        offset = data_cnt;
+    }
+    
+    if(*plen > 0) return true;
+    
+    return false;
 }
 
 void CommUsart_EnableIT(bool en)
