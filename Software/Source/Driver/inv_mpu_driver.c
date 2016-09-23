@@ -13,21 +13,19 @@
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
 
-#define MPU_SPI (&hspi1)
-
-#define MPU6500_WHO_AM_I_ADDR	0x75
-#define MPU6500_WHO_AM_I_VALUE  0x70
-
-#define D_EXT_GYRO_BIAS_X       (61 * 16)
-#define D_EXT_GYRO_BIAS_Y       (61 * 16) + 4
-#define D_EXT_GYRO_BIAS_Z       (61 * 16) + 8
 
 static void MPU_GPIOConfig(void);
 static void MPU_SPISelect(void);
 static void MPU_SPIDeselect(void);
+
 u8 INVMPU_WriteByte(u8 addr, u8 data);
 u8 INVMPU_ReadByte(u8 addr);
 
+/**
+* @brief  MPU （6500）初始化
+* @param  None
+* @retval None
+*/
 void InvMPU_Driver_Init(void)
 {
     u8 ret = 0;

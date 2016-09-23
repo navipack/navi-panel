@@ -13,34 +13,48 @@
 
 #include "stm32_lib.h"
 
-//#define USE_DMP
+/**
+  *@name MPU6500相关宏定义
+  *@{
+*/
+#define MPU_SPI (&hspi1)
 
-#define ACCEL_FSR 2
-#define ACCEL_FSR_CALC  (0x7FFF/ACCEL_FSR)
+#define MPU6500_WHO_AM_I_ADDR	0x75
+#define MPU6500_WHO_AM_I_VALUE  0x70
+
+#define D_EXT_GYRO_BIAS_X       (61 * 16)
+#define D_EXT_GYRO_BIAS_Y       (61 * 16) + 4
+#define D_EXT_GYRO_BIAS_Z       (61 * 16) + 8
+/**
+  *@}
+*/
+#define ACCEL_FSR 2     /** 加速度传感器满量程范围实际数值 */    
+#define ACCEL_FSR_CALC  (0x7FFF/ACCEL_FSR) /** 加速度传感器满量程范围对应数值 */ 
 #ifdef USE_DMP
-#define GYRO_FSR        2000
+#define GYRO_FSR        2000  /** 陀螺仪满量程范围实际数值 */
 #else
-#define GYRO_FSR        500
+#define GYRO_FSR        500   /** 陀螺仪满量程范围实际数值 */
 #endif
-#define GYRO_FSR_CALC   (0x7FFF/GYRO_FSR)
+#define GYRO_FSR_CALC   (0x7FFF/GYRO_FSR) /** 陀螺仪满量程范围对应数值 */ 
 
-#define MPU_DATA_QUAT   0x01
-#define MPU_DATA_GYRO   0x02        
-#define MPU_DATA_ACCEL  0x04
+#define MPU_DATA_QUAT   0x01    /** 用于区分四元数的对应数值 */
+#define MPU_DATA_GYRO   0x02    /** 用于区分陀螺仪的对应数值 */    
+#define MPU_DATA_ACCEL  0x04    /** 用于区分加速度的对应数值 */    
+
 
 typedef struct MPUSensorDataStruct
 {
-    u8 sensors;
-    long quat[4];
-	s16 accel_x;
-	s16 accel_y;
-	s16 accel_z;
+    u8 sensors;         
+    long quat[4];   /** 四元数存放数组 */       
+	s16 accel_x;    /** 加速度_x存放数值 */   
+	s16 accel_y;    /** 加速度_y存放数值 */   
+	s16 accel_z;    /** 加速度_z存放数值 */   
 	
 	s16 temp;
 	
-	s16 gyro_x;
-	s16 gyro_y;
-	s16 gyro_z;
+	s16 gyro_x;     /** 陀螺仪_x存放数值 */
+	s16 gyro_y;     /** 陀螺仪_y存放数值 */
+	s16 gyro_z;     /** 陀螺仪_z存放数值 */
 }MPUSensorData;
 
 void InvMPU_Driver_Init(void);

@@ -12,6 +12,11 @@
 #include "global_defines.h"
 #include "adc_user.h"
 
+
+/**
+  *@name 有刷直流电机 PWM相关宏定义
+  *@{
+*/
 #define PWM(_v) (PWM_PERIOD*(_v)/1000)
 
 MotorParamsTyp MotorParams[2] = 
@@ -176,17 +181,16 @@ void Motor_Output(u8 idx, s32 out, u8 stop_flag)
 * @retval 电流值
 */
 #define R_I_SENSE      110 //采样电阻 0.11欧
+
 s16 Motor_CurrentValues(u8 idx)
 {
 	s32 wAux;
     s16 I;
 
-   	//Ia = (hPhaseAOffset)-(ADC Channel 11 value)
-    //wAux = (s32)(MotorParams[mt_idx].hPhaseAOffset) - ((ADC1->JDR1)<<1);
     wAux = HAL_ADCEx_InjectedGetValue(MotorParams[idx].CURR_ADC, ADC_INJECTED_RANK_1);
-    wAux = (s32)(MotorParams[idx].hPhaseAOffset) - wAux; //偏置电压换算
+    wAux = (s32)(MotorParams[idx].hPhaseAOffset) - wAux;          // 偏置电压换算 
     //采样运放放大2倍
-    wAux = wAux * ADC_FULL_V/ADC_FULL_VALUE * 1000/R_I_SENSE / 2; //电流值计算 ma
+    wAux = wAux * ADC_FULL_V/ADC_FULL_VALUE * 1000/R_I_SENSE / 2; // 电流值计算 mA 
     
 	//Saturation of Ia 
     if (wAux < S16_MIN)

@@ -18,8 +18,6 @@ s32 DropData[DROP_MAX];
 static const s32 DropRef[DROP_MAX] = {1110, 1110, 1110, 1110};
 s32 DropInitData[DROP_MAX] = {0, 0, 0, 0};
 
-//static void InfraredDrop_Update(void);
-
 void InfraredDrop_InitData(bool enable)
 {
     static u32 cnt = 0;

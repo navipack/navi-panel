@@ -20,7 +20,6 @@
 
 #define USE_ENCODER_0
 #define USE_ENCODER_1
-//#define USE_ENCODER_2
 
 #define ENC_TIM_BASE_CLK  CKTIM_APB1
 
@@ -186,8 +185,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
         temp1 = (s64)encoder_delta * ENC_TIM_BASE_CLK 
                 / (basic_tim_cnt - MotorParams[enc_idx].PreviousBasicTimCnt + (ENC_TIM_BASE_CLK/ENCODER_SAMPLING_FREQ));
 		MotorParams[enc_idx].PreviousBasicTimCnt = basic_tim_cnt;
-	}
-	//is first measurement, discard it
+	}   //is first measurement, discard it	    
 	else
 	{
         MotorParams[enc_idx].PreviousBasicTimCnt = BasicTimer->CNT;
@@ -206,8 +204,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
         
         encoder_delta = encoder_cnt;
 	}
-	
-	//hPrevious_angle = haux;
+    
 	MotorParams[enc_idx].PreviousCnt = encoder_cnt;
 	MotorParams[enc_idx].PreviousOverflowCnt = encoder_Overflow_cnt;
 	

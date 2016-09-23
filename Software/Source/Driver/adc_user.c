@@ -13,6 +13,11 @@
 u16 ADC1_Buffer[VOL_SIZE];
 u16 RefValue = 1000;
 
+/**
+* @brief  初始化ADC1，DMA通道
+* @param  hadc：ADC口
+* @retval None
+*/
 void ADC_Init(ADC_HandleTypeDef* hadc)
 {
     if(hadc == &hadc1)
@@ -22,12 +27,24 @@ void ADC_Init(ADC_HandleTypeDef* hadc)
     }
 }
 
+/**
+* @brief  采集校准参数
+* @param  None
+* @retval None
+* @note：采集1.2V输入电压，与理论1.2v比较，防止供电电压不稳导致ADC采集的电压不正确
+*/
 s32 ADC_GetRef(void)
 {
-    RefValue = (s32)ADC1_Buffer[RANK_REF] * 1000 / ADC_REF_V;
+    RefValue = (s32)ADC1_Buffer[RANK_REF] * 1000 / ADC_REF_V ;
     return RefValue;
 }
 
+/**
+* @brief  ADC采集电压值
+* @param  rank：DMA通道口
+* @retval None
+* @return 该通道口的电压值
+*/
 s32 ADC_GetValue(u8 rank)
 {
     if(rank < RANK_MAX)
@@ -37,6 +54,12 @@ s32 ADC_GetValue(u8 rank)
     return 0;
 }
 
+/**
+* @brief  地侧ADC采集电压值
+* @param  idx :DMA通道口
+* @retval None
+* @note　因为地侧的ADC只用到四个，单独开来
+*/
 s32 ADC_GetDropValue(u8 idx)
 {
     if(idx < RANK_DROP_MAX)

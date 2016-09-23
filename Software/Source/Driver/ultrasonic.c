@@ -89,7 +89,11 @@ static void Trigger(bool on)
     }
 }
 
-
+/**
+* @brief  超声波数据处理函数
+* @param  cha：超声波   data：测量返回值
+* @retval None
+*/
 void UltrasonicFeedbackData(u8 cha, u16 data)
 {
     if(cha < 8)
@@ -103,6 +107,11 @@ void UltrasonicFeedbackData(u8 cha, u16 data)
     }
 }
 
+/**
+* @brief  超声波服务函数
+* @param  None
+* @retval None
+*/
 void UltrsonicTrigTask(void)
 {
     static u8 channel;
@@ -149,12 +158,12 @@ void UltrsonicTrigTask(void)
     is_trigger_on = true;
 }
 
-/***********************************************************
-* Description   : 根据中断间隔时间计算测量距离
-* Input         : 
-* Output        : 
-* Return        : 
-************************************************************/
+
+/**
+* @brief  根据中断间隔时间计算测量距离
+* @param  None
+* @retval None
+*/
 static void Ultrasonic_DistanceCalc(UltrasonicDataType *data, u8 pin_value)
 {
     u32 pluse_cnt;
@@ -179,12 +188,12 @@ static void Ultrasonic_DistanceCalc(UltrasonicDataType *data, u8 pin_value)
     StartPulse = pin_value;
 }
 
-/***********************************************************
-* Description   : 超声波中断
-* Input         : 
-* Output        : 
-* Return        : 
-************************************************************/
+
+/**
+* @brief  超声波中断
+* @param  None
+* @retval None
+*/
 void Ultrasonic_IRQHandler(void)
 {
     Ultrasonic_DistanceCalc(&UltrasonicData, HAL_GPIO_ReadPin(US_ECHO_GPIO_Port, US_ECHO_Pin));

@@ -56,6 +56,8 @@
 #include "comm.h"
 #include "motor.h"
 #include "global_defines.h"
+#include "contact_detection.h"
+#include "v_detection.h"
 
 /* USER CODE END Includes */
 
@@ -192,7 +194,8 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-        
+        //Contact_detection();
+        //supply_voltage_detection();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
