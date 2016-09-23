@@ -14,25 +14,36 @@
 #include "global_defines.h"
 #include "adc_user.h"
 
+
+/**
+  *@name 有刷直流电机 PWM相关宏定义
+  *@{
+*/
 #define PWM(_v) (PWM_PERIOD*(_v)/1000)
 
-#define MT0_PHASE_CHA         (ADC_CHANNEL_2)
-#define MT0_PHASE_CHA_MASK    (u32)((u32)(MT0_PHASE_CHA) << 15)
+#define MT0_PHASE_CHA         (ADC_CHANNEL_2)                   /** MT0的ADC采样通道A */
+#define MT0_PHASE_CHA_MASK    (u32)((u32)(MT0_PHASE_CHA) << 15) /** MT0的ADC采样通道A屏蔽位 */
 
-#define MT0_PHASE_CHB         (ADC_CHANNEL_3)
-#define MT0_PHASE_CHB_MASK    (u32)((u32)(MT0_PHASE_CHB) << 15)
+#define MT0_PHASE_CHB         (ADC_CHANNEL_3)                   /** MT0的ADC采样通道B */
+#define MT0_PHASE_CHB_MASK    (u32)((u32)(MT0_PHASE_CHB) << 15) /** MT0的ADC采样通道B屏蔽位 */
 
-#define MT0_PHASE_CHC         (ADC_CHANNEL_13)
-#define MT0_PHASE_CHC_MASK    (u32)((u32)(MT0_PHASE_CHC) << 15)
+#define MT0_PHASE_CHC         (ADC_CHANNEL_13)                  /** MT0的ADC采样通道C */
+#define MT0_PHASE_CHC_MASK    (u32)((u32)(MT0_PHASE_CHC) << 15) /** MT0的ADC采样通道C屏蔽位 */
 
-#define MT1_PHASE_CHA         (ADC_CHANNEL_12)
-#define MT1_PHASE_CHA_MASK    (u32)((u32)(MT1_PHASE_CHA) << 15)
+#define MT1_PHASE_CHA         (ADC_CHANNEL_12)                  /** MT1的ADC采样通道A */
+#define MT1_PHASE_CHA_MASK    (u32)((u32)(MT1_PHASE_CHA) << 15) /** MT1的ADC采样通道A屏蔽位 */
 
-#define MT1_PHASE_CHB         (ADC_CHANNEL_13)
-#define MT1_PHASE_CHB_MASK    (u32)((u32)(MT1_PHASE_CHB) << 15)
+#define MT1_PHASE_CHB         (ADC_CHANNEL_13)                  /** MT1的ADC采样通道B */
+#define MT1_PHASE_CHB_MASK    (u32)((u32)(MT1_PHASE_CHB) << 15) /** MT1的ADC采样通道B屏蔽位 */
 
-#define MT1_PHASE_CHC         (ADC_CHANNEL_13)
-#define MT1_PHASE_CHC_MASK    (u32)((u32)(MT1_PHASE_CHC) << 15)
+#define MT1_PHASE_CHC         (ADC_CHANNEL_13)                  /** MT1的ADC采样通道C */
+#define MT1_PHASE_CHC_MASK    (u32)((u32)(MT1_PHASE_CHC) << 15) /** MT1的ADC采样通道C屏蔽位 */
+
+#define R_I_SENSE      110      /** 采样电阻 0.11欧 */
+
+/**
+  *@}
+*/
 
 MotorParamsTyp MotorParams[3] = 
 {
@@ -196,18 +207,16 @@ void Motor_Output(u8 idx, s32 out, u8 stop_flag)
 * @param  idx     : 电机编号
 * @retval 电流值
 */
-#define R_I_SENSE      110 //采样电阻 0.11欧
+
 s16 Motor_CurrentValues(u8 idx)
 {
 	s32 wAux;
     s16 I;
 
-   	//Ia = (hPhaseAOffset)-(ADC Channel 11 value)
-    //wAux = (s32)(MotorParams[mt_idx].hPhaseAOffset) - ((ADC1->JDR1)<<1);
     wAux = HAL_ADCEx_InjectedGetValue(MotorParams[idx].CURR_ADC, ADC_INJECTED_RANK_1);
-    wAux = (s32)(MotorParams[idx].hPhaseAOffset) - wAux; //偏置电压换算
+    wAux = (s32)(MotorParams[idx].hPhaseAOffset) - wAux;          // 偏置电压换算 
     //采样运放放大2倍
-    wAux = wAux * ADC_FULL_V/ADC_FULL_VALUE * 1000/R_I_SENSE / 2; //电流值计算 ma
+    wAux = wAux * ADC_FULL_V/ADC_FULL_VALUE * 1000/R_I_SENSE / 2; // 电流值计算 mA 
     
 	//Saturation of Ia 
     if (wAux < S16_MIN)

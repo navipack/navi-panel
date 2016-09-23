@@ -17,13 +17,12 @@
 #include "speed_loop.h"
 #include "FIR_Filter.h"
 #include "math_lib.h"
-//#include "Median_Filter.h"
+
 
 #include "tim.h"
 
 #define USE_ENCODER_0
 #define USE_ENCODER_1
-//#define USE_ENCODER_2
 
 #define ENC_TIM_BASE_CLK  CKTIM_APB1
 
@@ -156,31 +155,21 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
 	
 	if (!MotorParams[enc_idx].bIs_First_Measurement)
 	{
-		// 1st reading of overflow counter
 		encoder_Overflow_cnt = MotorParams[enc_idx].EncTimOverflow;
-		// 1st reading of encoder timer counter
 		encoder_cnt = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
-		// basic timer counter
 		basic_tim_cnt = BasicTimer->CNT;
 		
-		// 2nd reading of overflow counter
 		encoder_Overflow_cnt2 = MotorParams[enc_idx].EncTimOverflow;
-		// 2nd reading of encoder timer counter
 		encoder_cnt2 = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
-		// basic timer counter
 		basic_tim_cnt2 = BasicTimer->CNT;
         
 		if (encoder_Overflow_cnt != encoder_Overflow_cnt2)
 		{
-			//Compare sample 1 & 2 and check if an overflow has been generated right 
-			//after the reading of encoder timer. If yes, copy sample 2 result in 
-			//sample 1 for next process 
 			encoder_cnt = encoder_cnt2;
 			encoder_Overflow_cnt = encoder_Overflow_cnt2;
 			basic_tim_cnt = basic_tim_cnt2;
 		}
 		
-		//haux = encoder_cnt;
         encoder_delta = (s32)(encoder_Overflow_cnt - MotorParams[enc_idx].PreviousOverflowCnt)
                         * (4*MotorParams[enc_idx].EncoderGapNum)
                         + (encoder_cnt - MotorParams[enc_idx].PreviousCnt);
@@ -191,8 +180,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
         temp1 = (s64)encoder_delta * ENC_TIM_BASE_CLK 
                 / (basic_tim_cnt - MotorParams[enc_idx].PreviousBasicTimCnt + (ENC_TIM_BASE_CLK/ENCODER_SAMPLING_FREQ));
 		MotorParams[enc_idx].PreviousBasicTimCnt = basic_tim_cnt;
-	}
-	//is first measurement, discard it
+	}   //is first measurement, discard it	    
 	else
 	{
         MotorParams[enc_idx].PreviousBasicTimCnt = BasicTimer->CNT;
@@ -211,8 +199,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
         
         encoder_delta = encoder_cnt;
 	}
-	
-	//hPrevious_angle = haux;
+    
 	MotorParams[enc_idx].PreviousCnt = encoder_cnt;
 	MotorParams[enc_idx].PreviousOverflowCnt = encoder_Overflow_cnt;
 	

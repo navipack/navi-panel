@@ -35,7 +35,7 @@ void ADC_Init(ADC_HandleTypeDef* hadc)
 */
 s32 ADC_GetRef(void)
 {
-    RefValue = (s32)ADC1_Buffer[RANK_REF] * 1000 / ADC_REF_V;
+    RefValue = (s32)ADC1_Buffer[RANK_REF] * 1000 / ADC_REF_V ;
     return RefValue;
 }
 
@@ -58,7 +58,7 @@ s32 ADC_GetValue(u8 rank)
 * @brief  地侧ADC采集电压值
 * @param  idx :DMA通道口
 * @retval None
-* @note　因为地侧的ＡＤＣ只用到四个，单独开来
+* @note　因为地侧的ADC只用到四个，单独开来
 */
 s32 ADC_GetDropValue(u8 idx)
 {

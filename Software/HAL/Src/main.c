@@ -189,15 +189,12 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-<<<<<<< HEAD
         Contact_detection();
         supply_voltage_detection();
-=======
 #ifndef COMM_UART_EN
         Comm_RxTask();
 #endif
-        
->>>>>>> upstream/develop
+
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
