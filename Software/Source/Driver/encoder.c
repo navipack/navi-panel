@@ -10,13 +10,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_lib.h"
-//#include "bsp.h"
 #include "Encoder.h"
 #include "global_defines.h"
 #include "speed_loop.h"
 #include "FIR_Filter.h"
 #include "math_lib.h"
-//#include "Median_Filter.h"
 
 #include "tim.h"
 

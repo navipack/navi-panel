@@ -11,9 +11,7 @@
 #include "sensor_update.h"
 #include "fir_filter.h"
 #include "math_lib.h"
-//#include "CANApplication.h"
 #include "global_defines.h"
-//#include "ShellyTalkInternal.h"
 #include "inv_mpu_driver.h"
 #include "motion_control.h"
 #include <math.h>

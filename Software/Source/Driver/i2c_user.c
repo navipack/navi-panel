@@ -17,7 +17,6 @@ HAL_StatusTypeDef USER_I2C_Mem_Read(I2C_HandleTypeDef *hi2c, uint16_t DevAddress
     
     while(__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_BUSY) == SET)
     {
-        //OSTimeDly(1);
         tick++;
         if(tick > Timeout)
         {
@@ -35,7 +34,6 @@ HAL_StatusTypeDef USER_I2C_Mem_Write(I2C_HandleTypeDef *hi2c, uint16_t DevAddres
     
     while(__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_BUSY) == SET)
     {
-        //OSTimeDly(1);
         tick++;
         if(tick > Timeout)
         {

@@ -53,7 +53,6 @@ void DropPower(bool on)
 
 void ChassisMotorDriverEnable(bool on)
 {
-    //HAL_GPIO_WritePin(AB_nSLEEP_GPIO_Port, AB_nSLEEP_Pin, (GPIO_PinState)(enable));
     if( on )
     {
         HAL_GPIO_WritePin(SHDNB_12_GPIO_Port, SHDNB_12_Pin, GPIO_PIN_SET);
