@@ -55,6 +55,8 @@
 
 #define ALERT_Pin GPIO_PIN_2
 #define ALERT_GPIO_Port GPIOE
+#define COMM_MODE_Pin GPIO_PIN_13
+#define COMM_MODE_GPIO_Port GPIOC
 #define DROP_IN4_Pin GPIO_PIN_0
 #define DROP_IN4_GPIO_Port GPIOC
 #define AD_12V_Pin GPIO_PIN_1
@@ -101,8 +103,6 @@
 #define STBYB_1_GPIO_Port GPIOD
 #define STBYB_2_Pin GPIO_PIN_10
 #define STBYB_2_GPIO_Port GPIOD
-#define COMM_MODE_Pin GPIO_PIN_13
-#define COMM_MODE_GPIO_Port GPIOD
 #define FLT3B_2_Pin GPIO_PIN_10
 #define FLT3B_2_GPIO_Port GPIOA
 #define MOTOR1_ENCODER_A_Pin GPIO_PIN_15
