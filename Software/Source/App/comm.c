@@ -89,6 +89,30 @@ void Comm_TxTask(void)
 }
 
 /**
+* @brief  通讯接收处理 Task
+* @param  None
+* @retval None
+*/
+void Comm_RxTask(void)
+{
+    u8 *data;
+    u32 len, i;
+    NaviPack_HeadType head;
+    
+    if(CDC_ReceiveData(&data, &len) != USBD_OK)
+    {
+        return;
+    }
+    
+    for(i=0; i<len; i++)
+    {
+        Comm_RecvPackage(data[i]);
+    }
+    
+    CDC_StartReceiveData();
+}
+
+/**
 * @brief  推送一个发送事件
 * @param  handle  : 对象编号
 * @param  head    : 数据头指针
@@ -96,9 +120,13 @@ void Comm_TxTask(void)
 */
 bool Comm_PostTxEvent(NaviPack_HeadType *head)
 {
+#ifdef COMM_UART_EN
     CommUsart_EnableIT(false);
     Queue_Put(&TxQueue, head);
     CommUsart_EnableIT(true);
+#else
+    Queue_Put(&TxQueue, head);
+#endif
     return true;
 };
 

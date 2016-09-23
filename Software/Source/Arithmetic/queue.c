@@ -17,8 +17,8 @@ bool Queue_Init(QueueType* q, void* pool, u32 buffer_size, u32 item_size)
         return false;
     }
     
-    q->front=0;
-    q->rear=0;
+    q->front = 0;
+    q->rear = 0;
     q->itemSize = item_size;
     q->itemCount = buffer_size/item_size;
     q->pool = (u8*)pool;

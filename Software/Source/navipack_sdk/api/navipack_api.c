@@ -104,9 +104,9 @@ bool Navipack_TxCallback(u8* pbuf, u16 len)
 {
     // 实际数据发送
 #ifdef COMM_UART_EN
-    return CommUsart_SendData(pbuf, len, 0);
+    return CommUsart_SendData(pbuf, len);
 #else
-    CDC_TransmitData(pbuf, len, 0);
+    return CDC_TransmitData(pbuf, len) == USBD_OK;
 #endif
 }
 

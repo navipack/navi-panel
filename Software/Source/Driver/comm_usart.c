@@ -42,19 +42,16 @@ void CommUsart_Init(UART_HandleTypeDef *huart)
 * @param  timeout : 超时，单位 ms，0 为一直等待
 * @retval None
 */
-u8 CommUsart_SendData(u8 *data, u16 len, u32 timeout)
+u8 CommUsart_SendData(u8 *data, u16 len)
 {
     u32 i;
     
-    //for(i=0; timeout == 0 || i < timeout; i++)
+    if(USER_UART_Transmit_DMA(COMM_UART, data, len, TxTcFlag) == HAL_OK)
     {
-        if(USER_UART_Transmit_DMA(COMM_UART, data, len, TxTcFlag) == HAL_OK)
-        {
-            SendIdle = false;
-            return true;
-        }
-        //OSTimeDly(1);
+        SendIdle = false;
+        return true;
     }
+
     return false;
 }
 

@@ -16,7 +16,7 @@
 #define COMM_UART_EN
 
 void CommUsart_Init(UART_HandleTypeDef *huart);
-u8 CommUsart_SendData(u8 *data, u16 len, u32 timeout);
+u8 CommUsart_SendData(u8 *data, u16 len);
 bool CommUsart_CanSendData(void);
 void CommUsart_EnableIT(bool en);
 
