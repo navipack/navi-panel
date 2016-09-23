@@ -12,6 +12,7 @@
 #define __GLOBAL_DEFINES_H__
 
 #include "motor.h"
+#include "motion_control.h"
 
 #define BasicTimer          (TIM7)
 
@@ -41,8 +42,7 @@ typedef struct GlobalParamsTypeStruct
     s32 temperature;        ///< 环境温度
     s32 temperature_in;     ///< 芯片内部温度
     
-    s32 lineVelocity;
-    s32 angularVelocity;
+    CSpeedVW presentVW;
 }GlobalParamsType;
 extern GlobalParamsType GlobalParams;
 

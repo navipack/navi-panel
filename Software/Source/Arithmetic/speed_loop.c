@@ -26,6 +26,7 @@ extern u8 MotionCmdProcessFlag;
 
 static PIDObjTyp SpeedLoopWPID;
 static PIDObjTyp SpeedLoopVPID;
+static CSpeedVW LoopTargetSpeed = {0, 0};
 
 /* Private functions ---------------------------------------------------------*/
 /* Private variable ----------------------------------------------------------*/
@@ -93,6 +94,21 @@ void GetSpeedKpi()
 #else
 #define GetSpeedKpi()
 #endif
+
+void SpeedLoop_SetTargetSpeed(CSpeedVW *s)
+{
+    LoopTargetSpeed = *s;
+}
+
+void SpeedLoop(void)
+{
+    GlobalParams.presentVW.sV = GetVelocity();
+    GlobalParams.presentVW.sW = GetOmega();
+    
+    AngularVelocityController(
+        LoopTargetSpeed.sV, LoopTargetSpeed.sW, 
+        GlobalParams.presentVW.sV, GlobalParams.presentVW.sW);
+}
 
 /**
 * @brief  角速度线速度环

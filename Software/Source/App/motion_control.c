@@ -47,7 +47,7 @@ u16 CntXHz = _xHz_CNT;
 //static OS_EVENT* PresentLoactionLock = NULL;
 //static OS_EVENT* PresentLoactionMBox = NULL;
 //static MotionControlMode_TypeDef MotionControlMode = MOTION_POINT_MODE;
-static CSpeedVW VWTModeSpeed = {0, 0};
+static CSpeedVW TargetSpeed = {0, 0};
 static u8 VW_Update = 0;
 static u32 HeartBeatCount = 0;
 static u8 EnterSpecialDecreasing = 0;
@@ -169,9 +169,9 @@ void SetVWValue(s32 v, s32 w, u16 t)
 //        w = ((w >> 8) | 0x01) * 150;
 //    }
     
-    VWTModeSpeed.sV = v;
-    VWTModeSpeed.sW = w;
-    //VWTModeSpeed.time = t * (MOTION_PREQ/1000);
+    TargetSpeed.sV = v;
+    TargetSpeed.sW = w;
+    //TargetSpeed.time = t * (MOTION_PREQ/1000);
     VW_Update = 1;
 }
 
@@ -278,25 +278,13 @@ void ChassisMovingController()
     static bool is_protect = false;
     static CDistanceValue present_posture = {0,0};
     static CSpeedVW present_vw = {0,0};
-    static CSpeedVW target_VW = {0,0};
+    static CSpeedVW target_vw = {0,0};
     static NaviPack_StatusType* status = &NavipackComm.status;
+    
+    present_vw = GlobalParams.presentVW;
     
     // 车当前位姿更新
     CarLocationUpdate(&present_posture, &present_vw, 1000000/MOTION_PREQ);
-   
-    if(VW_Update && !is_protect)
-    {
-        VW_Update = 0;
-        target_VW.sV = VWTModeSpeed.sV;
-        target_VW.sW = VWTModeSpeed.sW;
-    }
-    
-    	
-    GlobalParams.lineVelocity = GetVelocity();
-    GlobalParams.angularVelocity = GetOmega();
-    
-    present_vw.sV = GlobalParams.lineVelocity;
-    present_vw.sW = GlobalParams.angularVelocity;
     
     // 通讯反馈
     if(Navipack_LockReg(REG_ID_STATUS))
@@ -323,14 +311,22 @@ void ChassisMovingController()
 //        is_protect = DropAndCollisionSensorHandler(&target_VW, 300); // 碰撞及跌落传感器触发刹车策略
 //    }
     
-    if(!CarMotionEnable && !is_protect)
+    if(!is_protect)
     {
-        target_VW.sV = 0;
-        target_VW.sW = 0;
+        if(VW_Update)
+        {
+            VW_Update = 0;
+            target_vw = TargetSpeed;
+        }
+        
+        if(!CarMotionEnable)
+        {
+            target_vw.sV = 0;
+            target_vw.sW = 0;
+        }
     }
     
-    // 线速度、角速度环
-    AngularVelocityController(target_VW.sV, target_VW.sW, present_vw.sV, present_vw.sW);
+    SpeedLoop_SetTargetSpeed(&target_vw);
 }
 
 /**

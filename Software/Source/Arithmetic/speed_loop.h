@@ -16,6 +16,7 @@
 #include "stm32_lib.h"
 #include "PID_regulators.h"
 #include "FIR_Filter.h"
+#include "motion_control.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -32,5 +33,7 @@
 /* Exported functions ------------------------------------------------------- */
 void MotorPIDInit(void);
 void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega);
+void SpeedLoop_SetTargetSpeed(CSpeedVW *s);
+void SpeedLoop(void);
 
 #endif

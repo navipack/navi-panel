@@ -81,40 +81,51 @@ u32 GetIntervalCnt(u32 *last_capture_cnt, u32 *last_cnt)
     return plusecnt;
 }
 
+u32 GetIntervalTimeUs(u32 *last_capture_cnt, u32 *last_cnt)
+{
+    return (u64)(GetIntervalCnt(last_capture_cnt, last_cnt)) * 1000000 / BASIC_TIM_CNT_FREQ;
+}
 
 /**
 * @brief  Basic TIM 中断处理函数
 * @param  curve: 曲线参数
 * @retval None
 */
+u32 BasicRunTime[4];
 void BasicTIM_IRQHandler(TIM_HandleTypeDef *htim)
 {
 	static u32 cnt1 = 0;
 	static u32 cnt2 = 0;
-    static u32 cnt3 = 0;
-    static u32 cnt4 = 0;
     
     s32 encoder_delta;
     
     BasicTimOverflowCount++;
     //SetTestPoint(true);
 
-    if(FREQ(cnt4, ENCODER_SAMPLING_FREQ))
+    if(FREQ(cnt1, ENCODER_SAMPLING_FREQ))
     {
-        cnt4 = 0;
+        cnt1 = 0;
         //GET_SPEED_HZ(2, &MotorParams[2].PresentSpeed, &MotorParams[2].ObserveSpeed);
     }
     
-    if(cnt4 < 2)
+    if(cnt1 < 2)
     {
         //获取当前位置信息
         //MotorParams[cnt4].PresentPosition = GET_ABS_POS(cnt4);
         //获得当前脉冲速度
-        EncGetMachanicalSpeed(cnt4, &MotorParams[cnt4].PresentSpeed, &encoder_delta);
+        EncGetMachanicalSpeed(cnt1, &MotorParams[cnt1].PresentSpeed, &encoder_delta);
 
         // 计算积累移动距离
-        encoder_delta = encoder_delta * V_FACTOR + MotorParams[cnt4].AccumulatedDistanceRemainder;
-        MotorParams[cnt4].AccumulatedDistance += encoder_delta / V_FULL_FACTOR;
-        MotorParams[cnt4].AccumulatedDistanceRemainder = encoder_delta % V_FULL_FACTOR;
+        encoder_delta = encoder_delta * V_FACTOR + MotorParams[cnt1].AccumulatedDistanceRemainder;
+        MotorParams[cnt1].AccumulatedDistance += encoder_delta / V_FULL_FACTOR;
+        MotorParams[cnt1].AccumulatedDistanceRemainder = encoder_delta % V_FULL_FACTOR;
     }
+    
+    if(FREQ(cnt2, MOTION_PREQ))
+    {
+        cnt2 = 0;
+        SpeedLoop();
+    }
+    
+    BasicRunTime[cnt1] = (u64)BasicTimer->CNT * 1000000 / BASIC_TIM_CNT_FREQ;
 }
