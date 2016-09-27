@@ -5,9 +5,9 @@
 #include "stm32_lib.h"
 #include "adc.h"
 
-#define V_Alarm_Pin GPIO_PIN_5
-#define V_Alarm_alarm_GPIO_Port GPIOD
-#define V_Alarm 11.9
+#define V_Alarm_Pin GPIO_PIN_5          /** 电压警报Pin */
+#define V_Alarm_alarm_GPIO_Port GPIOD   /** 电压警报Port */
+#define V_Alarm 11.9                    /** 报警电压 */
 void supply_voltage_detection(void);
 
 #endif

@@ -13,9 +13,9 @@
 #include "comm.h"
 #include "gpio_user.h"
 
-#define HALF_V_SOUND 170 //音速除以2 = 170m/s
+#define HALF_V_SOUND 170 /** 音速除以2 = 170m/s */ 
 
-#define DIST_MAX    8
+#define DIST_MAX    8    /** 通道口的最大值 */
 
 static void Ultrasonic_detection(void);
     

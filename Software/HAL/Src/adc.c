@@ -60,7 +60,7 @@ void MX_ADC1_Init(void)
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 6;
+  hadc1.Init.NbrOfConversion = 8;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
@@ -116,6 +116,24 @@ void MX_ADC1_Init(void)
     */
   sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
   sConfig.Rank = 6;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure Regular Channel 
+    */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 7;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure Regular Channel 
+    */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 8;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -198,6 +216,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
   
     /**ADC1 GPIO Configuration    
     PC0     ------> ADC1_IN10
+    PA0-WKUP     ------> ADC1_IN0
+    PA1     ------> ADC1_IN1
     PA2     ------> ADC1_IN2
     PA4     ------> ADC1_IN4
     PC4     ------> ADC1_IN14
@@ -208,7 +228,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = I1_SEN_Pin|DROP_IN3_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|I1_SEN_Pin|DROP_IN3_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -278,6 +298,8 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
   
     /**ADC1 GPIO Configuration    
     PC0     ------> ADC1_IN10
+    PA0-WKUP     ------> ADC1_IN0
+    PA1     ------> ADC1_IN1
     PA2     ------> ADC1_IN2
     PA4     ------> ADC1_IN4
     PC4     ------> ADC1_IN14
@@ -286,7 +308,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     */
     HAL_GPIO_DeInit(GPIOC, DROP_IN4_Pin|DROP_IN_T_Pin);
 
-    HAL_GPIO_DeInit(GPIOA, I1_SEN_Pin|DROP_IN3_Pin);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1|I1_SEN_Pin|DROP_IN3_Pin);
 
     HAL_GPIO_DeInit(GPIOB, DROP_IN1_Pin|DROP_IN2_Pin);
 
