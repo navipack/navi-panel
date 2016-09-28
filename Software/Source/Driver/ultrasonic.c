@@ -12,6 +12,7 @@
 #include "tim_user.h"
 #include "comm.h"
 #include "gpio_user.h"
+#include "navipack_api.h"
 
 #define HALF_V_SOUND 170 //音速除以2 = 170m/s
 
@@ -98,11 +99,14 @@ void UltrasonicFeedbackData(u8 cha, u16 data)
 {
     if(cha < 8)
     {
-        //SetUltrasonicData(cha, data);
-        //if(NaviPack_LockReg(REG_ID_STATUS))
+        if(Navipack_LockReg(REG_ID_STATUS))
         {
+            if(data == NavipackComm.status.ultrasound[cha])
+            {
+                data ^= 0x0001;
+            }
             NavipackComm.status.ultrasound[cha] = data;
-            //NaviPack_UnlockReg(REG_ID_STATUS);
+            Navipack_UnlockReg(REG_ID_STATUS);
         }
     }
 }
@@ -178,10 +182,6 @@ static void Ultrasonic_DistanceCalc(UltrasonicDataType *data, u8 pin_value)
         {
             distance = 0x0FFFF;
         }
-        else if(distance == NavipackComm.status.ultrasound[data->currentChannel])
-        {
-            distance ^= 0x0001;
-        }
         UltrasonicFeedbackData(data->currentChannel, distance);
     }
     
@@ -235,7 +235,7 @@ static void Ultrasonic_detection(void)
         {
             if(HAL_GPIO_ReadPin(US_ECHO_GPIO_Port, US_ECHO_Pin) == GPIO_PIN_SET)
             {
-                DetectionChannel [a] = 1;
+                DetectionChannel[a] = 1;
                 break;
             }
         }

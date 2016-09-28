@@ -49,7 +49,7 @@ void ResetHeartbeat(void)
 void SystemSuperviseInit(void)
 {
     SET_ERR(DRV_ERR_IMU);
-    SET_ERR(DRV_ERR_BATTERY_I2C);
+    SET_ERR(DRV_ERR_I2C);
     SET_ERR(DRV_ERR_COMM_TIMEOUT);
     SET_ERR(DRV_ERR_TILT);
 }
