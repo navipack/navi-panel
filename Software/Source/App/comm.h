@@ -27,8 +27,8 @@ typedef struct TalkFuncTypeStruct
 //    OS_MEM *pTxMem;
 //    OS_MEM *pRxMem;
 
-	u8 RxMemBuf[TALK_RX_MEM_SIZE];				  
-	u8 TxMemBuf[TALK_TX_MEM_SIZE];
+	u8 rx_mem_buf[TALK_RX_MEM_SIZE];				  
+	u8 tx_mem_buf[TALK_TX_MEM_SIZE];
     
     NavipackComm_Type* comm;
     
@@ -46,7 +46,7 @@ typedef struct TalkFuncTypeStruct
 #pragma pack(push, 1)
 typedef struct NavipackUserTypeStruct
 {
-    u8 debugFlag;
+    u8 debug_flag;
     u16 vkp;
     u16 vki;
     u16 wkp;

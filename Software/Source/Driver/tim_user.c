@@ -106,20 +106,20 @@ void BasicTIM_IRQHandler(TIM_HandleTypeDef *htim)
     if(FREQ(cnt1, ENCODER_SAMPLING_FREQ))
     {
         cnt1 = 0;
-        //GET_SPEED_HZ(2, &MotorParams[2].PresentSpeed, &MotorParams[2].ObserveSpeed);
+        //GET_SPEED_HZ(2, &MotorParams[2].present_speed, &MotorParams[2].ObserveSpeed);
     }
     
     if(cnt1 < 2)
     {
         //获取当前位置信息
-        //MotorParams[cnt4].PresentPosition = GET_ABS_POS(cnt4);
+        //MotorParams[cnt4].present_position = GET_ABS_POS(cnt4);
         //获得当前脉冲速度
-        EncGetMachanicalSpeed(cnt1, &MotorParams[cnt1].PresentSpeed, &encoder_delta);
+        EncGetMachanicalSpeed(cnt1, &MotorParams[cnt1].present_speed, &encoder_delta);
 
         // 计算积累移动距离
-        encoder_delta = encoder_delta * V_FACTOR + MotorParams[cnt1].AccumulatedDistanceRemainder;
-        MotorParams[cnt1].AccumulatedDistance += encoder_delta / V_FULL_FACTOR;
-        MotorParams[cnt1].AccumulatedDistanceRemainder = encoder_delta % V_FULL_FACTOR;
+        encoder_delta = encoder_delta * V_FACTOR + MotorParams[cnt1].accumulated_distance_remainder;
+        MotorParams[cnt1].acccumulated_distance += encoder_delta / V_FULL_FACTOR;
+        MotorParams[cnt1].accumulated_distance_remainder = encoder_delta % V_FULL_FACTOR;
     }
     
     if(FREQ(cnt2, MOTION_PREQ))

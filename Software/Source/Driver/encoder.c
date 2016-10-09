@@ -29,12 +29,12 @@
 #define MINIMUM_MECHANICAL_SPEED_RPM  (u32)1  		//RPM
 #define MAXIMUM_MECHANICAL_SPEED_RPM  (u32)50000 	//RPM
 
-#define MINIMUM_MECHANICAL_SPEED(idx)  	(u32)(MINIMUM_MECHANICAL_SPEED_RPM*4*MotorParams[idx].EncoderGapNum/60)
-#define MAXIMUM_MECHANICAL_SPEED(idx)  	(u32)(MAXIMUM_MECHANICAL_SPEED_RPM*4*MotorParams[idx].EncoderGapNum/60)
+#define MINIMUM_MECHANICAL_SPEED(idx)  	(u32)(MINIMUM_MECHANICAL_SPEED_RPM*4*MotorParams[idx].encoder_gap_num/60)
+#define MAXIMUM_MECHANICAL_SPEED(idx)  	(u32)(MAXIMUM_MECHANICAL_SPEED_RPM*4*MotorParams[idx].encoder_gap_num/60)
 
 #define MAX_SPD_OVERFLOW(idx)		(ENCODER_SAMPLING_FREQ/MINIMUM_MECHANICAL_SPEED(idx))	
 
-#define COUNTER_RESET(a, idx)  		(u16)(( ((s32)(a)*4*MotorParams[idx].EncoderGapNum/360) - 1)/MotorParams[idx].PairNum)
+#define COUNTER_RESET(a, idx)  		(u16)(( ((s32)(a)*4*MotorParams[idx].encoder_gap_num/360) - 1)/MotorParams[idx].pair_num)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -51,8 +51,8 @@ void EncInitForChannel0(u16 align)
 {
     u8 idx = 0;
     EncResetEncoder(idx, align);
-    MotorParams[idx].TurnsCount = 0;
-    MotorParams[idx].EncTimOverflow = 0;
+    MotorParams[idx].turns_count = 0;
+    MotorParams[idx].enc_tim_overflow = 0;
 }
 
 /**
@@ -64,8 +64,8 @@ void EncInitForChannel1(u16 align)
 {
     u8 idx = 1;
     EncResetEncoder(idx, align);
-    MotorParams[idx].TurnsCount = 0;
-    MotorParams[idx].EncTimOverflow = 0;
+    MotorParams[idx].turns_count = 0;
+    MotorParams[idx].enc_tim_overflow = 0;
 }
 
 /**
@@ -77,8 +77,8 @@ void EncInitForChannel2(u16 align)
 {
     u8 idx = 2;
     EncResetEncoder(idx, align);
-    MotorParams[idx].TurnsCount = 0;
-    MotorParams[idx].EncTimOverflow = 0;
+    MotorParams[idx].turns_count = 0;
+    MotorParams[idx].enc_tim_overflow = 0;
 }
 
 /**
@@ -91,8 +91,8 @@ void EncInit(u8 idx)
 {
     switch(idx)
     {
-    case 0: EncInitForChannel0(MotorParams[0].AlignmentAngle);  break;
-    case 1: EncInitForChannel1(MotorParams[1].AlignmentAngle);  break;
+    case 0: EncInitForChannel0(MotorParams[0].alignment_angle);  break;
+    case 1: EncInitForChannel1(MotorParams[1].alignment_angle);  break;
     }
 }
 
@@ -112,13 +112,13 @@ void EncResetEncoder(u8 enc_idx, u16 align)
 	else
 	{
 		//Reset counter 
-		if(MotorParams[enc_idx].EncoderDir == 0)
+		if(MotorParams[enc_idx].encoder_dir == 0)
 			__HAL_TIM_SET_COUNTER(MotorParams[enc_idx].ENC_TIMER, COUNTER_RESET(align, enc_idx));
 		else
-			__HAL_TIM_SET_COUNTER(MotorParams[enc_idx].ENC_TIMER, 4*MotorParams[enc_idx].EncoderGapNum - COUNTER_RESET(align, enc_idx));
+			__HAL_TIM_SET_COUNTER(MotorParams[enc_idx].ENC_TIMER, 4*MotorParams[enc_idx].encoder_gap_num - COUNTER_RESET(align, enc_idx));
 	}
 
-	MotorParams[enc_idx].EncDecPluse = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
+	MotorParams[enc_idx].enc_dec_pluse = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
 }
 
 #ifdef _DEBUG
@@ -148,17 +148,17 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
     s32 encoder_cnt, encoder_cnt2;
 	s32 temp1;
 	
-	if (!MotorParams[enc_idx].bIs_First_Measurement)
+	if (!MotorParams[enc_idx].bIs_first_measurement)
 	{
 		// 1st reading of overflow counter
-		encoder_Overflow_cnt = MotorParams[enc_idx].EncTimOverflow;
+		encoder_Overflow_cnt = MotorParams[enc_idx].enc_tim_overflow;
 		// 1st reading of encoder timer counter
 		encoder_cnt = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
 		// basic timer counter
 		basic_tim_cnt = BasicTimer->CNT;
 		
 		// 2nd reading of overflow counter
-		encoder_Overflow_cnt2 = MotorParams[enc_idx].EncTimOverflow;
+		encoder_Overflow_cnt2 = MotorParams[enc_idx].enc_tim_overflow;
 		// 2nd reading of encoder timer counter
 		encoder_cnt2 = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
 		// basic timer counter
@@ -175,38 +175,38 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
 		}
 		
 		//haux = encoder_cnt;
-        encoder_delta = (s32)(encoder_Overflow_cnt - MotorParams[enc_idx].PreviousOverflowCnt)
-                        * (4*MotorParams[enc_idx].EncoderGapNum)
-                        + (encoder_cnt - MotorParams[enc_idx].PreviousCnt);
+        encoder_delta = (s32)(encoder_Overflow_cnt - MotorParams[enc_idx].previous_overflow_cnt)
+                        * (4*MotorParams[enc_idx].encoder_gap_num)
+                        + (encoder_cnt - MotorParams[enc_idx].previous_cnt);
 
         EncoderDataAccumulator(enc_idx, encoder_delta);
         // 由于时基中断触发后才调用该函数，所以time_base_cnt记录的是时基TIM重装之后的差值，所以差值要加上时基周期才是真实时间
         // speed computation as delta angle * 1/(speed sampling time)
         temp1 = (s64)encoder_delta * ENC_TIM_BASE_CLK 
-                / (basic_tim_cnt - MotorParams[enc_idx].PreviousBasicTimCnt + (ENC_TIM_BASE_CLK/ENCODER_SAMPLING_FREQ));
-		MotorParams[enc_idx].PreviousBasicTimCnt = basic_tim_cnt;
+                / (basic_tim_cnt - MotorParams[enc_idx].previous_basic_tim_cnt + (ENC_TIM_BASE_CLK/ENCODER_SAMPLING_FREQ));
+		MotorParams[enc_idx].previous_basic_tim_cnt = basic_tim_cnt;
 	}   //is first measurement, discard it	    
 	else
 	{
-        MotorParams[enc_idx].PreviousBasicTimCnt = BasicTimer->CNT;
-		MotorParams[enc_idx].bIs_First_Measurement = false;
+        MotorParams[enc_idx].previous_basic_tim_cnt = BasicTimer->CNT;
+		MotorParams[enc_idx].bIs_first_measurement = false;
 		temp1 = 0;
-		MotorParams[enc_idx].EncTimOverflow = 0;
+		MotorParams[enc_idx].enc_tim_overflow = 0;
 		encoder_cnt = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
 		// Check if Encoder_Timer_Overflow is still zero. In case an overflow IT 
 		// occured it resets overflow counter and wPWM_Counter_Angular_Velocity 
-		if (MotorParams[enc_idx].EncTimOverflow != 0)
+		if (MotorParams[enc_idx].enc_tim_overflow != 0)
 		{
 			encoder_cnt = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
-			MotorParams[enc_idx].EncTimOverflow = 0;
+			MotorParams[enc_idx].enc_tim_overflow = 0;
 		}
-        encoder_Overflow_cnt = MotorParams[enc_idx].EncTimOverflow;
+        encoder_Overflow_cnt = MotorParams[enc_idx].enc_tim_overflow;
         
         encoder_delta = encoder_cnt;
 	}
     
-	MotorParams[enc_idx].PreviousCnt = encoder_cnt;
-	MotorParams[enc_idx].PreviousOverflowCnt = encoder_Overflow_cnt;
+	MotorParams[enc_idx].previous_cnt = encoder_cnt;
+	MotorParams[enc_idx].previous_overflow_cnt = encoder_Overflow_cnt;
 	
 	*feedback_spd = temp1;
     *p_encoder_delta = encoder_delta;
@@ -225,7 +225,7 @@ void EncGetMachanicalSpeed(u8 enc_idx, s32* p_encoder_speed, s32* p_encoder_delt
 
 	EncCalcRotSpeed(enc_idx, (s32*)&wtemp1, (s32*)&wtemp2);
 
-	if(MotorParams[enc_idx].EncoderDir == 0)
+	if(MotorParams[enc_idx].encoder_dir == 0)
 	{
 		*p_encoder_speed = wtemp1;
 		*p_encoder_delta = wtemp2;
@@ -248,13 +248,13 @@ void Encoder_IRQHandler(u8 index)
 {
 	if(__HAL_TIM_IS_TIM_COUNTING_DOWN(MotorParams[index].ENC_TIMER))
 	{
-		MotorParams[index].TurnsCount--;
-        MotorParams[index].EncTimOverflow--;
+		MotorParams[index].turns_count--;
+        MotorParams[index].enc_tim_overflow--;
 	}
 	else
 	{
-		MotorParams[index].TurnsCount++;
-        MotorParams[index].EncTimOverflow++;
+		MotorParams[index].turns_count++;
+        MotorParams[index].enc_tim_overflow++;
 	}
 }
 

@@ -51,22 +51,22 @@ void MotorPIDInit(void)
     SpeedLoopVPID.outabslimit = &MaxOut;
     SpeedLoopWPID.outabslimit = &MaxOut;
     
-    MotorParams[0].LoopMode = SPEED_LOOP;
-    MotorParams[1].LoopMode = SPEED_LOOP;    
+    MotorParams[0].loop_mode = speed_loop;
+    MotorParams[1].loop_mode = speed_loop;    
     
-    if(MotorParams[0].LoopMode == SPEED_TORQUE_LOOP)
+    if(MotorParams[0].loop_mode == speed_torque_loop)
     {
-        MotorParams[0].PIDTorque.kp = 1000;
-        //MotorParams[0].PIDTorque.ki = 150;
-        MotorParams[0].PIDTorque.ki = 10;
-        MotorParams[0].PIDTorque.kd = 0;
-        MotorParams[0].PIDTorque.outabslimit = &max;
+        MotorParams[0].PID_torque.kp = 1000;
+        //MotorParams[0].PID_torque.ki = 150;
+        MotorParams[0].PID_torque.ki = 10;
+        MotorParams[0].PID_torque.kd = 0;
+        MotorParams[0].PID_torque.outabslimit = &max;
         
-        MotorParams[1].PIDTorque.kp = 1000;
-        //MotorParams[1].PIDTorque.ki = 150;
-        MotorParams[1].PIDTorque.ki = 10;
-        MotorParams[1].PIDTorque.kd = 0;
-        MotorParams[1].PIDTorque.outabslimit = &max;
+        MotorParams[1].PID_torque.kp = 1000;
+        //MotorParams[1].PID_torque.ki = 150;
+        MotorParams[1].PID_torque.ki = 10;
+        MotorParams[1].PID_torque.kd = 0;
+        MotorParams[1].PID_torque.outabslimit = &max;
         
         SpeedLoopVPID.kp = 13000;
         SpeedLoopVPID.ki = 20;
@@ -77,15 +77,15 @@ void MotorPIDInit(void)
     }
     else
     {
-        MotorParams[0].PIDTorque.kp = 15000;
-        MotorParams[0].PIDTorque.ki = 100;
-        MotorParams[0].PIDTorque.kd = 1;
-        MotorParams[0].PIDTorque.outabslimit = &max;
+        MotorParams[0].PID_torque.kp = 15000;
+        MotorParams[0].PID_torque.ki = 100;
+        MotorParams[0].PID_torque.kd = 1;
+        MotorParams[0].PID_torque.outabslimit = &max;
         
-        MotorParams[1].PIDTorque.kp = 15000;
-        MotorParams[1].PIDTorque.ki = 100;
-        MotorParams[1].PIDTorque.kd = 1;
-        MotorParams[1].PIDTorque.outabslimit = &max;
+        MotorParams[1].PID_torque.kp = 15000;
+        MotorParams[1].PID_torque.ki = 100;
+        MotorParams[1].PID_torque.kd = 1;
+        MotorParams[1].PID_torque.outabslimit = &max;
     }
 }
 

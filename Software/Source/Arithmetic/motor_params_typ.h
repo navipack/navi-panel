@@ -23,46 +23,46 @@ typedef struct MotorParamsTypStruct
     //关键参数需要被赋值------------------------------------------//
     TIM_HandleTypeDef *ENC_TIMER;         //编码器时钟
     TIM_HandleTypeDef *PWM_TIMER;         //PWM输出时钟
-    u16 EncoderGapNum;          //编码器线数
-    u8  PairNum;                //极对数
-    u8  EncoderDir;             //编码器方向
-    u32 SequenceLength;         //注入转换长度
+    u16 encoder_gap_num;          //编码器线数
+    u8  pair_num;                //极对数
+    u8  encoder_dir;             //编码器方向
+    u32 sequence_length;         //注入转换长度
     ADC_HandleTypeDef *CURR_ADC;     //电流采样 ADC
     
     //电机状态控制值----------------------------------------------//
-    u8 LoopMode;
-    PIDObjTyp PIDTorque;        //力矩PID
+    u8 loop_mode;
+    PIDObjTyp PID_torque;        //力矩PID
     
-    bool bIs_First_Measurement; //编码器是否第一次测量
+    bool bIs_first_measurement; //编码器是否第一次测量
     
     //PID控制参数值-----------------------------------------------//
-    s32 MaxSpeed;
-    u16 MaxTorque;
-    s32 MaxVoltage;
-    s32 TurnsCount;
+    s32 max_speed;
+    u16 max_torque;
+    s32 max_voltage;
+    s32 turns_count;
     
     //编码器时钟定义-----------------------------------------------//
-    s64 EncDecPluse;            
-    s16 PreviousCnt;
-    s32 PreviousOverflowCnt;
-    u32 PreviousBasicTimCnt;
-    volatile s32 EncTimOverflow;//该变量指示UPDATE中断发生的个数，也就是说
+    s64 enc_dec_pluse;            
+    s16 previous_cnt;
+    s32 previous_overflow_cnt;
+    u32 previous_basic_tim_cnt;
+    volatile s32 enc_tim_overflow;//该变量指示UPDATE中断发生的个数，也就是说
 							   	//ENC每转一圈，CPU得到 4* PPR(编码器自身线数，自解)个脉冲，中断发生一次
 							   	//该变量+1.
     
-    u16 hPhaseAOffset;          //A相偏移量
-    u16 hPhaseBOffset;          //B相偏移量
+    u16 h_phase_a_offset;          //A相偏移量
+    u16 h_phase_b_offset;          //B相偏移量
     //======反馈值======//
-    RotorCurrentTyp PresentCurrentDQ;
-    s32 PresentSpeed;
-    s32 AccumulatedDistance;
-    s32 AccumulatedDistanceRemainder;
-    s64 PresentPosition;
+    RotorCurrentTyp present_current_dq;
+    s32 present_speed;
+    s32 acccumulated_distance;
+    s32 accumulated_distance_remainder;
+    s64 present_position;
 
 	//电机初始化参数-----------------------------------------------//
-	s16 AlignmentAngle;
-    s32 DeadZone;
-    s32 DeadZoneMove;
+	s16 alignment_angle;
+    s32 dead_zone;
+    s32 dead_zone_move;
 }MotorParamsTyp;
 
 #endif

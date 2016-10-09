@@ -11,5 +11,5 @@
 #include "global_defines.h"
 
 GlobalParamsType GlobalParams = {
-    .errStatus = 0
+    .err_status = 0
 };

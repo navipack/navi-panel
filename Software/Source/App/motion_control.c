@@ -59,11 +59,11 @@ static bool CarMotionEnable = true;
 
 void MotorParamsInit(void)
 {
-    MotorParams[0].AccumulatedDistance = 0;
-    MotorParams[0].AccumulatedDistanceRemainder = 0;
+    MotorParams[0].acccumulated_distance = 0;
+    MotorParams[0].accumulated_distance_remainder = 0;
     
-    MotorParams[1].AccumulatedDistance = 0;
-    MotorParams[1].AccumulatedDistanceRemainder = 0;
+    MotorParams[1].acccumulated_distance = 0;
+    MotorParams[1].accumulated_distance_remainder = 0;
 }
 
 /**
@@ -95,7 +95,7 @@ s32 GetVelocity()
     s64 velocity;
     
     velocity = AVG_Filter_s32(&FMVASpeedFilter[0], 
-        (MotorParams[0].PresentSpeed + MotorParams[1].PresentSpeed) / 2);
+        (MotorParams[0].present_speed + MotorParams[1].present_speed) / 2);
 
     return V_ENC_TO_MM(velocity); //脉冲每秒换算成毫米每秒
 
@@ -257,8 +257,8 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 time_threshold)
 */
 bool IsWheelRest()
 {
-    if(MotorParams[0].PresentSpeed == 0 && MotorParams[1].PresentSpeed == 0 && //编码器输出判断
-        MotorParams[0].PresentCurrentDQ.Iq < 100 && MotorParams[1].PresentCurrentDQ.Iq < 100) //电机输出电流判断，毫伏
+    if(MotorParams[0].present_speed == 0 && MotorParams[1].present_speed == 0 && //编码器输出判断
+        MotorParams[0].present_current_dq.Iq < 100 && MotorParams[1].present_current_dq.Iq < 100) //电机输出电流判断，毫伏
     {
         return true;
     }
@@ -290,15 +290,15 @@ void ChassisMovingController()
     if(Navipack_LockReg(REG_ID_STATUS))
     {
         status->angularPos = DEGREE_TO_RADIAN(present_posture.theta);
-        status->leftEncoderPos = MotorParams[0].AccumulatedDistance;
-        status->rightEncoderPos = MotorParams[1].AccumulatedDistance;
+        status->leftEncoderPos = MotorParams[0].acccumulated_distance;
+        status->rightEncoderPos = MotorParams[1].acccumulated_distance;
         status->lineVelocity = present_vw.sV;
         status->angularVelocity = DEGREE_TO_RADIAN(present_vw.sW);
         Navipack_UnlockReg(REG_ID_STATUS);
     }
 
 //#ifdef _DEBUG
-//    if(UserReg.debugFlag & 0x02)
+//    if(UserReg.debug_flag & 0x02)
 //    {
 //        is_protect = false;
 //    }

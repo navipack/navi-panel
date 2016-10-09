@@ -60,11 +60,11 @@ bool Comm_Init(void)
     
     if(GetCommMode())
     {
-        GlobalParams.commMode = COMM_UART;
+        GlobalParams.comm_mode = COMM_UART;
     }
     else
     {
-        GlobalParams.commMode = COMM_USB;
+        GlobalParams.comm_mode = COMM_USB;
     }
 
     return true;
@@ -109,7 +109,7 @@ void Comm_RxTask(void)
     u32 len, i;
     NaviPack_HeadType head;
     
-    if(GlobalParams.commMode == COMM_UART)
+    if(GlobalParams.comm_mode == COMM_UART)
     {
         if(CommUsart_RecvData(&data, &len))
         {

@@ -22,9 +22,9 @@ static void Ultrasonic_detection(void);
     
 typedef struct UltrasonicDataTypeStruct
 {
-    u32 lastTimCnt;
-    u32 lastCaptureCnt;
-    u8 currentChannel;
+    u32 last_tim_cnt;
+    u32 last_capture_cnt;
+    u8 current_channel;
 }UltrasonicDataType;
 
 static u8 StartPulse = 0;
@@ -150,7 +150,7 @@ void UltrsonicTrigTask(void)
     
     //channel = DebugChannel;
     SelectChannel(channel);
-    UltrasonicData.currentChannel = channel;
+    UltrasonicData.current_channel = channel;
     
     // 开外部中断
     __HAL_GPIO_EXTI_CLEAR_IT(US_ECHO_Pin);
@@ -173,7 +173,7 @@ static void Ultrasonic_DistanceCalc(UltrasonicDataType *data, u8 pin_value)
     u32 pluse_cnt;
     u32 distance;
     
-    pluse_cnt = GetIntervalCnt(&data->lastCaptureCnt, &data->lastTimCnt);
+    pluse_cnt = GetIntervalCnt(&data->last_capture_cnt, &data->last_tim_cnt);
     
     if(pin_value == 0)
     {
@@ -182,7 +182,7 @@ static void Ultrasonic_DistanceCalc(UltrasonicDataType *data, u8 pin_value)
         {
             distance = 0x0FFFF;
         }
-        UltrasonicFeedbackData(data->currentChannel, distance);
+        UltrasonicFeedbackData(data->current_channel, distance);
     }
     
     StartPulse = pin_value;

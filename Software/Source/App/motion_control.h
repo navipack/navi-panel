@@ -22,15 +22,15 @@
 
 typedef enum ShellyMotoLoopModeTypEnum
 {
-    OPEN_LOOP,
-    TORQUE_LOOP,
-    SPEED_TORQUE_LOOP,
-    POS_TORQUE_LOOP,
-    POS_SPEED_TORQUE_LOOP,
-    SPEED_LOOP,
-    POS_LOOP,
-    POS_SPEED_LOOP,
-    ANG_VEL_SPEED_LOOP,
+    open_loop,
+    torque_loop,
+    speed_torque_loop,
+    pos_torque_loop,
+    pos_speed_torque_loop,
+    speed_loop,
+    pos_loop,
+    pos_speed_loop,
+    ang_vel_speed_loop,
 }ShellyMotoLoopModeTyp;
 
 typedef struct CSpeedVWStruct
@@ -73,7 +73,7 @@ typedef struct MotionTargetTypeStruct
 typedef struct CTwoCarLocationStruct
 {
 	MotionTargetType point[2];
-    u8 validlocationCNT;
+    u8 valid_location_cnt;
 }CTwoCarLocation;
 
 typedef struct CDistanceValueStruct

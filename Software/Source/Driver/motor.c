@@ -21,17 +21,17 @@
 
 MotorParamsTyp MotorParams[2] = 
 {
-    /*ENC_TIMER--PWM_TIMER--EncoderGapNum--PairNum--EncoderDir--SequenceLength--CURR_ADC*/
+    /*ENC_TIMER--PWM_TIMER--encoder_gap_num--pair_num--encoder_dir--sequence_length--CURR_ADC*/
     {&htim2,     &htim1,    ENCODER_GAP,   4,       0,          0,              &hadc1},
     {&htim3,     &htim1,    ENCODER_GAP,   4,       1,          0,              &hadc2},
 };
 
 void Motor_Init(void)
 {
-    MotorParams[0].DeadZone = PWM(16);
-    MotorParams[0].DeadZoneMove = PWM(0);
-    MotorParams[1].DeadZone = PWM(16);
-    MotorParams[1].DeadZoneMove = PWM(0);
+    MotorParams[0].dead_zone = PWM(16);
+    MotorParams[0].dead_zone_move = PWM(0);
+    MotorParams[1].dead_zone = PWM(16);
+    MotorParams[1].dead_zone_move = PWM(0);
 }
 
 void Motor_Output(u8 idx, s32 out, u8 stop_flag)
@@ -41,13 +41,13 @@ void Motor_Output(u8 idx, s32 out, u8 stop_flag)
     // PWM
     if(stop_flag)
     {
-        if(out > 0) out = out * (PWM_PERIOD - MotorParams[idx].DeadZone) / SINGLE_MAX + MotorParams[idx].DeadZone;
-        else if(out < 0) out = out * (PWM_PERIOD - MotorParams[idx].DeadZone) / SINGLE_MAX - MotorParams[idx].DeadZone;
+        if(out > 0) out = out * (PWM_PERIOD - MotorParams[idx].dead_zone) / SINGLE_MAX + MotorParams[idx].dead_zone;
+        else if(out < 0) out = out * (PWM_PERIOD - MotorParams[idx].dead_zone) / SINGLE_MAX - MotorParams[idx].dead_zone;
     }
     else
     {
-        if(out > 0) out = out * (PWM_PERIOD - MotorParams[idx].DeadZoneMove) / SINGLE_MAX + MotorParams[idx].DeadZoneMove;
-        else if(out < 0) out = out * (PWM_PERIOD - MotorParams[idx].DeadZoneMove) / SINGLE_MAX - MotorParams[idx].DeadZoneMove;
+        if(out > 0) out = out * (PWM_PERIOD - MotorParams[idx].dead_zone_move) / SINGLE_MAX + MotorParams[idx].dead_zone_move;
+        else if(out < 0) out = out * (PWM_PERIOD - MotorParams[idx].dead_zone_move) / SINGLE_MAX - MotorParams[idx].dead_zone_move;
     }
     
     #if 0
@@ -188,7 +188,7 @@ s16 Motor_CurrentValues(u8 idx)
     s16 I;
 
     wAux = HAL_ADCEx_InjectedGetValue(MotorParams[idx].CURR_ADC, ADC_INJECTED_RANK_1);
-    wAux = (s32)(MotorParams[idx].hPhaseAOffset) - wAux;          // 偏置电压换算 
+    wAux = (s32)(MotorParams[idx].h_phase_a_offset) - wAux;          // 偏置电压换算 
     //采样运放放大2倍
     wAux = wAux * ADC_FULL_V/ADC_FULL_VALUE * 1000/R_I_SENSE / 2; // 电流值计算 mA 
     
@@ -231,6 +231,6 @@ void Motor_CurrentReadingCalibration()
         sum[1] += HAL_ADCEx_InjectedGetValue(MotorParams[1].CURR_ADC, ADC_INJECTED_RANK_1);
     }
     
-    MotorParams[0].hPhaseAOffset = sum[0] / bIndex;
-    MotorParams[1].hPhaseAOffset = sum[1] / bIndex;
+    MotorParams[0].h_phase_a_offset = sum[0] / bIndex;
+    MotorParams[1].h_phase_a_offset = sum[1] / bIndex;
 }

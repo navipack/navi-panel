@@ -110,7 +110,7 @@ void SystemSuperviseTask(void)		//100Hz
     else
     {
 #ifdef _DEBUG
-        if(UserReg.debugFlag & 0x01)
+        if(UserReg.debug_flag & 0x01)
         {
             ResetHeartbeat();
         }
@@ -123,7 +123,7 @@ void SystemSuperviseTask(void)		//100Hz
     }
 
 #ifdef _DEBUG
-    if(!(UserReg.debugFlag & 0x01))
+    if(!(UserReg.debug_flag & 0x01))
 #endif
     {
         // 倾斜角度

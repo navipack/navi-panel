@@ -130,7 +130,7 @@ void DriverInit(void)
 
     // Lidar Communication
     Comm_Init();
-    if(GlobalParams.commMode == COMM_UART)
+    if(GlobalParams.comm_mode == COMM_UART)
     {
         MX_USART3_UART_Init();
         CommUsart_Init(&huart3);

@@ -104,7 +104,7 @@ bool NaviPack_TxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head)
 bool Navipack_TxCallback(u8* pbuf, u16 len)
 {
     // 实际数据发送
-    if(GlobalParams.commMode == COMM_UART)
+    if(GlobalParams.comm_mode == COMM_UART)
     {
         return CommUsart_SendData(pbuf, len);
     }
