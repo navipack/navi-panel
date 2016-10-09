@@ -23,6 +23,8 @@ typedef struct RunFlagTypesStruct
     u8 imu;
     u8 motion;
     u8 us;
+    u8 contact;
+    
 }RunFlagType;
 
 extern RunFlagType RunFlag;

@@ -194,7 +194,7 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-        //Contact_detection();
+        Contact_detection();
         //supply_voltage_detection();
   /* USER CODE END WHILE */
 

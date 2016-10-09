@@ -39,7 +39,7 @@ void RunFlagHandler(void)
     static u32 imu = 0;
     static u32 motion = 0;
     static u32 us = 0;
-    
+    static u32 contact=0;
     u32 tick = HAL_GetTick();
     
     if(tick - _100Hz >= TICK_FREQ/100)
@@ -51,6 +51,7 @@ void RunFlagHandler(void)
 
     FREQ_FLAG(imu, 500);
     FREQ_FLAG(led, 2);
+    FREQ_FLAG(contact, 500);
     FREQ_FLAG(second, 1);
     FREQ_FLAG(motion, MOTION_PREQ);
     FREQ_FLAG(us, US_FREQ);
