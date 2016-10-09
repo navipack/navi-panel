@@ -22,7 +22,7 @@
 #define DRV_ERR_NONE            0
 #define DRV_ERR_COMM_TIMEOUT    0x01
 #define DRV_ERR_IMU             0x02
-#define DRV_ERR_BATTERY_I2C     0x04
+#define DRV_ERR_I2C             0x04
 #define DRV_ERR_TMP_I2C         0x08
 #define DRV_ERR_TILT            0x10
 #define DRV_ERR_PICKUP          0x20
