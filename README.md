@@ -5,7 +5,13 @@
 ## Copyright &copy; 2016 Inmotion Corporation
 该仓库所有文件为**深圳乐行天下科技有限公司**所有，未经许可不得用于商业用途。
 
-# 目录树简介
+## 工具
+`navi-panel.ioc` 文件使用 ST 官方的 CubeMX 打开、编辑并生成库源码。
+
+- 软件版本为： CubeMX 4.17.0
+- 库版本为：Firmware Package for Family STM32F1 1.4.0
+
+## 目录树简介
     NaviPanel
     │  LICENSE
     │  README.md
