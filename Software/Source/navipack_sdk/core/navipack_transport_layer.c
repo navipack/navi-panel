@@ -15,17 +15,26 @@
 #define FRAMETAIL 0x55
 
 /**
-* @brief  解包函数
+* @brief  NaviPack 解包函数
 * @param  comm : 通讯对象
 * @param  data : 接收的数据，单 byte
 * @retval 是否成功解包
 */
 bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data)
 {
-    TransportFrame_Type *pframe = &comm->rxFrame;
-    u8* buffer = comm->rxBuffer;
-    u16 size = comm->rxSize;
-    
+    return TransportUnpacking(&comm->rxFrame, comm->rxBuffer, comm->rxSize, data);
+}
+
+/**
+* @brief  传输层解包函数
+* @param  pframe : 数据帧对象
+* @param  buffer : 解包结果存储缓冲区
+* @param  size   : 解包缓冲区尺寸
+* @param  data   : 接收的数据，单 byte
+* @retval 是否成功解包
+*/
+bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 data)
+{
     if( (pframe->offset >= size) //当接收的数据长度超过接收SIZE
         || ((data == FRAMEHEAD) && (pframe->lastByte == FRAMEHEAD)) )
     {
@@ -94,7 +103,7 @@ bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data)
 }
 
 /**
-* @brief  打包函数
+* @brief  NaviPack 打包函数
 * @param  comm      : 通讯对象
 * @param  in_buf    : 打包数据指针
 * @param  len       : 打包数据长度
@@ -103,11 +112,23 @@ bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data)
 */
 bool Navipack_TransportPacking(NavipackComm_Type *comm, u8 *in_buf, u16 len, u8 pack_flag)
 {
+    return TransportPacking(&comm->txFrame, comm->txBuffer, comm->txSize, in_buf, len, pack_flag);
+}
+
+/**
+* @brief  传输层打包函数
+* @param  pframe    : 数据帧对象
+* @param  buffer    : 打包结果存储缓冲区
+* @param  size      : 打包缓冲区尺寸
+* @param  in_buf    : 打包数据指针
+* @param  len       : 打包数据长度
+* @param  pack_flag : 打包模式 @ref PACK_FLAG_define 按 bit 设置
+* @retval 打包错误则返回 false
+*/
+bool TransportPacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 *in_buf, u16 len, u8 pack_flag)
+{
     u16 i;
-    TransportFrame_Type *pframe = &comm->txFrame;
-    u8* buffer = comm->txBuffer;
-    u16 size = comm->txSize;
-    
+
     if((pack_flag & PACK_FLAG_BEGIN) != 0)
     {
         pframe->offset = 0;

@@ -24,5 +24,7 @@
 
 bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data);
 bool Navipack_TransportPacking(NavipackComm_Type *comm, u8 *in_buf, u16 len, u8 pack_flag);
+bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 data);
+bool TransportPacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 *in_buf, u16 len, u8 pack_flag);
 
 #endif
