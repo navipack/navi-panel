@@ -33,7 +33,7 @@ UltrasonicDataType UltrasonicData;
 static u8 DebugChannel = 0;
 
 // 通道转换表
-static const u8 ChannelTable[DIST_MAX] = {7,6,4,1,0,2,3,5};
+static const u8 ChannelTable[DIST_MAX] = {4,1,0,7,6,2,3,5};
 static u8 DetectionChannel[DIST_MAX] = {0};
 /**
 * @brief  通道切换
