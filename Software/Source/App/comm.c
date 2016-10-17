@@ -107,7 +107,6 @@ void Comm_RxTask(void)
 {
     u8 *data;
     u32 len, i;
-    NaviPack_HeadType head;
     
     if(GlobalParams.commMode == COMM_UART)
     {
@@ -149,7 +148,6 @@ bool Comm_PostTxEvent(NaviPack_HeadType *head)
 */
 void Comm_BoostTask(void)
 {
-    u16 cnt = 0;
     static NaviPack_HeadType head = {
             NAVIPACK_SLAVE_ID,
             FUNC_ID_READ_STATUS,

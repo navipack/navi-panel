@@ -179,8 +179,6 @@ void SensorUpdate_DoubleAxis(IMURawInfo SensorDataInput, IMUFilterInfo *SensorDa
 
 void SensorUpdateAnglerate(IMURawInfo SensorDataInput, IMUFilterInfo *SensorDataOutput)
 {
-	static bool is_first_update = true;
-	s32 fused_kg = 20;
 	s32 sin_pitch_angle = GetSin(s_IMU_FilterProcessInfo.fused_pitch_angle);
 	s32 cos_pitch_angle = GetCos(s_IMU_FilterProcessInfo.fused_pitch_angle);
 	s32 sin_roll_angle = GetSin(s_IMU_FilterProcessInfo.fused_roll_angle);
@@ -213,7 +211,6 @@ void QuaternionToEular(long quat[4], IMUFilterInfo *SensorDataOutput)
     //float yaw;
     float w,x,y,z;	
 	float t1,t11,t2;
-    s32 gyro_x = 0, gyro_y = 0, gyro_z = 0;
     w = quat[0] / 1073741824.0f;
     x = quat[1] / 1073741824.0f;
     y = quat[2] / 1073741824.0f;

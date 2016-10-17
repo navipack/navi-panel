@@ -45,8 +45,6 @@ void CommUsart_Init(UART_HandleTypeDef *huart)
 */
 u8 CommUsart_SendData(u8 *data, u16 len)
 {
-    u32 i;
-    
     if(USER_UART_Transmit_DMA(COMM_UART, data, len, TxTcFlag) == HAL_OK)
     {
         SendIdle = false;

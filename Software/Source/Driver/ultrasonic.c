@@ -65,8 +65,6 @@ static u8 SelectChannel( u16 channel )
 */
 void Ultrasonic_Init(void)
 {
-    u8 i;
-    
     SelectChannel(0);
     
     Ultrasonic_detection();
@@ -122,9 +120,6 @@ void UltrsonicTrigTask(void)
     static u32 last_tick = 0;
     static bool is_trigger_on = false;
     
-    u8 err;
-    UltrasonicDataType *data;
-    
     if(is_trigger_on && HAL_GetTick() - last_tick > 0)
     {
         is_trigger_on = false;
@@ -148,7 +143,7 @@ void UltrsonicTrigTask(void)
     //channel = (channel+3) & 0x07;
     channel = (channel+2) % 5;
     
-    //channel = DebugChannel;
+    DebugChannel = channel;
     SelectChannel(channel);
     UltrasonicData.currentChannel = channel;
     

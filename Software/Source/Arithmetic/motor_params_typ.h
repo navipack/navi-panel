@@ -15,25 +15,19 @@
 typedef struct RotorCurrentTypStruct
 {
 	s16 Iq;
-	s16 Id;		
+	s16 Id;
 }RotorCurrentTyp; 
 
 typedef struct MotorParamsTypStruct
 {
     //关键参数需要被赋值------------------------------------------//
-    TIM_HandleTypeDef *ENC_TIMER;         //编码器时钟
-    TIM_HandleTypeDef *PWM_TIMER;         //PWM输出时钟
-    u16 EncoderGapNum;          //编码器线数
-    u8  PairNum;                //极对数
-    u8  EncoderDir;             //编码器方向
-    u32 SequenceLength;         //注入转换长度
-    ADC_HandleTypeDef *CURR_ADC;     //电流采样 ADC
-    
-    //电机状态控制值----------------------------------------------//
-    u8 LoopMode;
-    PIDObjTyp PIDTorque;        //力矩PID
-    
-    bool bIs_First_Measurement; //编码器是否第一次测量
+    TIM_HandleTypeDef *ENC_TIMER;         ///< 编码器时钟
+    TIM_HandleTypeDef *PWM_TIMER;         ///< PWM输出时钟
+    u16 EncoderGapNum;          ///< 编码器线数
+    u8  PairNum;                ///< 极对数
+    u8  EncoderDir;             ///< 编码器方向
+    u32 SequenceLength;         ///< 注入转换长度
+    ADC_HandleTypeDef *CURR_ADC;     ///< 电流采样 ADC
     
     //PID控制参数值-----------------------------------------------//
     s32 MaxSpeed;
@@ -41,17 +35,16 @@ typedef struct MotorParamsTypStruct
     s32 MaxVoltage;
     s32 TurnsCount;
     
-    //编码器时钟定义-----------------------------------------------//
+    //编码器------------------------------------------------------//
     s64 EncDecPluse;            
     s16 PreviousCnt;
     s32 PreviousOverflowCnt;
     u32 PreviousBasicTimCnt;
-    volatile s32 EncTimOverflow;//该变量指示UPDATE中断发生的个数，也就是说
-							   	//ENC每转一圈，CPU得到 4* PPR(编码器自身线数，自解)个脉冲，中断发生一次
-							   	//该变量+1.
+    volatile s32 EncTimOverflow; ///< 该变量指示UPDATE中断发生的个数
+    bool bIs_First_Measurement; //编码器是否第一次测量
     
-    u16 hPhaseAOffset;          //A相偏移量
-    u16 hPhaseBOffset;          //B相偏移量
+    u16 hPhaseAOffset;          ///< A相偏移量
+    u16 hPhaseBOffset;          ///< B相偏移量
     //======反馈值======//
     RotorCurrentTyp PresentCurrentDQ;
     s32 PresentSpeed;

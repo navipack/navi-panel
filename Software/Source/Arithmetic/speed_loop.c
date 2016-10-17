@@ -43,50 +43,11 @@ s32 MaxOut = SINGLE_MAX*2;
 */
 void MotorPIDInit(void)
 {
-    static s32 max = PWM_PERIOD;
-    
     PIDInit(&SpeedLoopVPID, 8000, 50, 0);
     PIDInit(&SpeedLoopWPID, 3000, 20, 0);
     
     SpeedLoopVPID.outabslimit = &MaxOut;
     SpeedLoopWPID.outabslimit = &MaxOut;
-    
-    MotorParams[0].LoopMode = SPEED_LOOP;
-    MotorParams[1].LoopMode = SPEED_LOOP;    
-    
-    if(MotorParams[0].LoopMode == SPEED_TORQUE_LOOP)
-    {
-        MotorParams[0].PIDTorque.kp = 1000;
-        //MotorParams[0].PIDTorque.ki = 150;
-        MotorParams[0].PIDTorque.ki = 10;
-        MotorParams[0].PIDTorque.kd = 0;
-        MotorParams[0].PIDTorque.outabslimit = &max;
-        
-        MotorParams[1].PIDTorque.kp = 1000;
-        //MotorParams[1].PIDTorque.ki = 150;
-        MotorParams[1].PIDTorque.ki = 10;
-        MotorParams[1].PIDTorque.kd = 0;
-        MotorParams[1].PIDTorque.outabslimit = &max;
-        
-        SpeedLoopVPID.kp = 13000;
-        SpeedLoopVPID.ki = 20;
-        SpeedLoopVPID.kd = 0;
-        SpeedLoopWPID.kp = 15000;
-        SpeedLoopWPID.ki = 110;
-        SpeedLoopWPID.kd = 0;
-    }
-    else
-    {
-        MotorParams[0].PIDTorque.kp = 15000;
-        MotorParams[0].PIDTorque.ki = 100;
-        MotorParams[0].PIDTorque.kd = 1;
-        MotorParams[0].PIDTorque.outabslimit = &max;
-        
-        MotorParams[1].PIDTorque.kp = 15000;
-        MotorParams[1].PIDTorque.ki = 100;
-        MotorParams[1].PIDTorque.kd = 1;
-        MotorParams[1].PIDTorque.outabslimit = &max;
-    }
 }
 
 #ifdef _DEBUG
@@ -131,7 +92,6 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     bool stop_flag;
     s32 outV, outA;
     s32 left_out, right_out;
-    s32 left_dead_zone, right_dead_zone;
 
     static s32 last_outV = 0;
     static s32 last_outA = 0;

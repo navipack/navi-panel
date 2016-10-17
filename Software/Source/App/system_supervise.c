@@ -64,9 +64,6 @@ void SystemSuperviseTask(void)		//100Hz
     //static bool pickup_en;
     static bool ready = false;
     static u8 tmp_init_flag = 1;
-    static u16 temp_cnt = 0;
-    
-    //BQ20ZX_Init();
 
 
 	if(!RunFlag.supervise) return;
