@@ -98,9 +98,9 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     
     GetSpeedKpi();
     
-    stop_flag = abs(omega) < DEGREE(1) && abs(velocity) < 15;
-        // 停止策略
-    if(abs(TargetW) < DEGREE(1) && abs(TargetV) < 15 && stop_flag)
+    stop_flag = abs(omega) < DEGREE(1) && abs(velocity) < 10;
+    // 停止策略
+    if(abs(TargetW) < DEGREE(1) && abs(TargetV) < 10 && stop_flag)
     {
         outA = 0;
         outV = 0;
@@ -109,7 +109,6 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     {
         // 线速度 PID
         outV = PIDRegulatorS32(TargetV<<8, velocity<<8, last_outV, &SpeedLoopVPID);
-        
         
         // 角速度 PID
         outA = PIDRegulatorS32(TargetW>>3, omega>>3, last_outA, &SpeedLoopWPID);

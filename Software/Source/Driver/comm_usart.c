@@ -9,30 +9,22 @@
 */
 
 #include "comm_usart.h"
-#include "usart_user.h"
-
-static UART_HandleTypeDef *COMM_UART;
-#define UART_BUFF_SIZE 0x100
-
-static u32 TxTcFlag;
-static u8 UartBuffer[UART_BUFF_SIZE];
-static bool SendIdle = true;
 
 /**
 * @brief  通讯用串口初始化
 * @param  huart : 串口句柄
 * @retval None
 */
-void CommUsart_Init(UART_HandleTypeDef *huart)
-{ 
-    COMM_UART = huart;
-    
-    TxTcFlag = __HAL_DMA_GET_TC_FLAG_INDEX(huart->hdmatx);
+void CommUsart_Init(CommUsartType *hcomm, UART_HandleTypeDef *huart)
+{
+    hcomm->huart = huart;
+    hcomm->tx_tc_flag = __HAL_DMA_GET_TC_FLAG_INDEX(huart->hdmatx);
+    hcomm->tx_idle = false;
     
     __HAL_UART_CLEAR_OREFLAG(huart);
     //__HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
     //__HAL_UART_ENABLE(huart);
-    HAL_DMA_Start(huart->hdmarx, (u32)&huart->Instance->DR, (u32)UartBuffer, UART_BUFF_SIZE);
+    HAL_DMA_Start(huart->hdmarx, (u32)&huart->Instance->DR, (u32)hcomm->dma_rx_buffer, hcomm->buffer_size);
     huart->Instance->CR3 |= USART_CR3_DMAR;
 }
 
@@ -43,24 +35,24 @@ void CommUsart_Init(UART_HandleTypeDef *huart)
 * @param  timeout : 超时，单位 ms，0 为一直等待
 * @retval None
 */
-u8 CommUsart_SendData(u8 *data, u16 len)
+u8 CommUsart_SendData(CommUsartType *hcomm, u8 *data, u16 len)
 {
-    if(USER_UART_Transmit_DMA(COMM_UART, data, len, TxTcFlag) == HAL_OK)
+    if(USER_UART_Transmit_DMA(hcomm->huart, data, len, hcomm->tx_tc_flag) == HAL_OK)
     {
-        SendIdle = false;
+        hcomm->tx_idle = false;
         return true;
     }
 
     return false;
 }
 
-bool CommUsart_CanSendData(void)
+bool CommUsart_CanSendData(CommUsartType *hcomm)
 {
-    if(__HAL_DMA_GET_FLAG(COMM_UART->hdmatx, TxTcFlag))
+    if(__HAL_DMA_GET_FLAG(hcomm->huart->hdmatx, hcomm->tx_tc_flag))
     {
-        SendIdle = true;
+        hcomm->tx_idle = true;
     }
-    return SendIdle;
+    return hcomm->tx_idle;
 }
 
 /**
@@ -69,15 +61,15 @@ bool CommUsart_CanSendData(void)
 * @param  plen : 返回接收到的数据长度
 * @retval 是否有数据
 */
-bool CommUsart_RecvData(u8 **pbuf, u32* plen)
+bool CommUsart_RecvData(CommUsartType *hcomm, u8 **pbuf, u32* plen)
 {
     static u32 offset = 0;
     
-    u16 data_cnt = UART_BUFF_SIZE - __HAL_DMA_GET_COUNTER(COMM_UART->hdmarx);
-    *pbuf = &UartBuffer[offset];
+    u16 data_cnt = hcomm->buffer_size - __HAL_DMA_GET_COUNTER(hcomm->huart->hdmarx);
+    *pbuf = &hcomm->dma_rx_buffer[offset];
     if(data_cnt < offset)
     {
-        *plen = UART_BUFF_SIZE - offset;
+        *plen = hcomm->buffer_size - offset;
         offset = 0;
     }
     else
@@ -91,15 +83,41 @@ bool CommUsart_RecvData(u8 **pbuf, u32* plen)
     return false;
 }
 
-void CommUsart_EnableIT(bool en)
+void CommUsart_EnableIT(CommUsartType *hcomm, bool en)
 {
     if(en)
     {
-        __HAL_UART_ENABLE_IT(COMM_UART, UART_IT_RXNE);
+        __HAL_UART_ENABLE_IT(hcomm->huart, UART_IT_RXNE);
     }
     else
     {
-        __HAL_UART_DISABLE_IT(COMM_UART, UART_IT_RXNE);
+        __HAL_UART_DISABLE_IT(hcomm->huart, UART_IT_RXNE);
     }
 }
 
+/**
+* @brief  串口 DMA 发送接口
+* @param  huart      : 串口句柄
+* @param  pData      : 数据指针
+* @param  Size       : 数据长度
+* @param  tx_tc_flag : 发送完成 flag 偏移
+* @retval None
+*/
+HAL_StatusTypeDef USER_UART_Transmit_DMA(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, u32 tx_tc_flag)
+{
+    if(__HAL_DMA_GET_FLAG(huart->hdmatx, tx_tc_flag))
+    {
+        if(huart->State == HAL_UART_STATE_BUSY_TX_RX)
+        {
+            huart->State = HAL_UART_STATE_BUSY_TX;
+        }
+        else
+        {
+            huart->State = HAL_UART_STATE_READY;
+        }
+        
+        __HAL_UNLOCK(huart->hdmatx);
+        __HAL_DMA_CLEAR_FLAG(huart->hdmatx, tx_tc_flag);
+    }
+    return HAL_UART_Transmit_DMA(huart, pData, Size);
+}

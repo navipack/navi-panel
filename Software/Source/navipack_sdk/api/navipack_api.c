@@ -106,7 +106,7 @@ bool Navipack_TxCallback(u8* pbuf, u16 len)
     // 实际数据发送
     if(GlobalParams.commMode == COMM_UART)
     {
-        return CommUsart_SendData(pbuf, len);
+        return CommUsart_SendData(GetCommUartHandle(), pbuf, len);
     }
     else
     {
