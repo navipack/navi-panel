@@ -12,11 +12,22 @@
 #define __COMM_USART_H__
 
 #include "stm32_lib.h"
+#include "usart.h"
 
-void CommUsart_Init(UART_HandleTypeDef *huart);
-u8 CommUsart_SendData(u8 *data, u16 len);
-bool CommUsart_CanSendData(void);
-bool CommUsart_RecvData(u8 **pbuf, u32* plen);
-void CommUsart_EnableIT(bool en);
+typedef struct{
+    UART_HandleTypeDef *huart;
+    u32 tx_tc_flag;
+    u8* dma_rx_buffer;
+    u16 buffer_size;
+    bool tx_idle;
+}CommUsartType;
+
+void CommUsart_Init(CommUsartType *hcomm, UART_HandleTypeDef *huart);
+u8 CommUsart_SendData(CommUsartType *hcomm, u8 *data, u16 len);
+bool CommUsart_CanSendData(CommUsartType *hcomm);
+bool CommUsart_RecvData(CommUsartType *hcomm, u8 **pbuf, u32* plen);
+void CommUsart_EnableIT(CommUsartType *hcomm, bool en);
+
+HAL_StatusTypeDef USER_UART_Transmit_DMA(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, u32 tx_tc_flag);
 
 #endif

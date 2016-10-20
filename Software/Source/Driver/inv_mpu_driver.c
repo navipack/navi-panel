@@ -13,8 +13,6 @@
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
 
-
-static void MPU_GPIOConfig(void);
 static void MPU_SPISelect(void);
 static void MPU_SPIDeselect(void);
 
@@ -29,8 +27,7 @@ u8 INVMPU_ReadByte(u8 addr);
 void InvMPU_Driver_Init(void)
 {
     u8 ret = 0;
-    unsigned char more;
-    long accel[3], quat[4], temperature;
+    long accel[3];
     struct int_param_s int_param;
     
     assert_param(MPU_SPI == &hspi1);
@@ -98,8 +95,6 @@ static void MPU_SPIDeselect(void)
 */
 u8 INVMPU_WriteBytes(u8 addr, u16 len, const u8* data)
 {
-    u8 i;
-    
     MPU_SPISelect();
     if(HAL_SPI_Transmit(MPU_SPI, &addr, 1, 5) == HAL_OK)
     {
@@ -121,8 +116,6 @@ u8 INVMPU_WriteByte(u8 addr, u8 data)
 */
 u8 INVMPU_ReadBytes(u8 addr, u16 len, u8* data)
 {
-    u8 i;
-    
     MPU_SPISelect();
     addr |= 0x80;
     if(HAL_SPI_Transmit(MPU_SPI, &addr, 1, 5) == HAL_OK)

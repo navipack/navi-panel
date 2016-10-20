@@ -17,6 +17,7 @@
 
 #define TALK_MAX 1
 #define TALK_MSG_BOX_SIZE 10
+#define UART_BUFF_SIZE  128
 
 #define NAVI_MAX(a, b) (a>b?a:b)
 #define NAVI_MAX_BLOCK (u32)(NAVI_MAX(NAVI_MAX( sizeof(NaviPack_CtrlType), sizeof(NaviPack_StatusType)), sizeof(NaviPack_ConfigType)))
@@ -25,13 +26,8 @@
 NavipackComm_Type NavipackComm;
 NavipackUserType UserReg;
 
-//static TalkFuncType TalkObj[TALK_MAX];
-
-//static OS_EVENT *CommTxEvent;
-//static void *TxEventBox[TALK_MSG_BOX_SIZE];
-
-//static OS_MEM *CommTxMemo;
-//static NaviPack_HeadType PackHeadPool[TALK_MSG_BOX_SIZE];
+static CommUsartType CommUsart;
+static u8 UartBuffer[UART_BUFF_SIZE];
 
 static QueueType TxQueue;
 static NaviPack_HeadType TxQueuePool[10];
@@ -58,16 +54,22 @@ bool Comm_Init(void)
     
     NaviPack_Init();
     
-    if(GetCommMode())
+    if(GlobalParams.commMode == COMM_UART)
     {
-        GlobalParams.comm_mode = COMM_UART;
-    }
-    else
-    {
-        GlobalParams.comm_mode = COMM_USB;
+        CommUsart.buffer_size = UART_BUFF_SIZE;
+        CommUsart.dma_rx_buffer = UartBuffer;
     }
 
     return true;
+}
+
+/**
+* @brief  获得串口句柄
+* @retval 串口句柄
+*/
+void* GetCommUartHandle(void)
+{
+    return &CommUsart;
 }
 
 /**
@@ -107,11 +109,10 @@ void Comm_RxTask(void)
 {
     u8 *data;
     u32 len, i;
-    NaviPack_HeadType head;
     
-    if(GlobalParams.comm_mode == COMM_UART)
+    if(GlobalParams.commMode == COMM_UART)
     {
-        if(CommUsart_RecvData(&data, &len))
+        if(CommUsart_RecvData(&CommUsart, &data, &len))
         {
             for(i=0; i<len; i++)
             {
@@ -149,7 +150,6 @@ bool Comm_PostTxEvent(NaviPack_HeadType *head)
 */
 void Comm_BoostTask(void)
 {
-    u16 cnt = 0;
     static NaviPack_HeadType head = {
             NAVIPACK_SLAVE_ID,
             FUNC_ID_READ_STATUS,

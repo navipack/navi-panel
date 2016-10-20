@@ -66,4 +66,6 @@ void Comm_BoostTask(void);
 
 void Comm_RecvPackage(u8 data);
 
+void* GetCommUartHandle(void);
+
 #endif

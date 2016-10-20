@@ -35,7 +35,7 @@
 
 typedef struct GlobalParamsTypeStruct
 {
-    u8 comm_mode;
+    u8 commMode;
     u32 err_status;
     u32 last_tim_cnt;         ///< 计时 Count 保存
     u32 last_capture_cnt;     ///< 计时溢出 Count 保存

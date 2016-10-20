@@ -15,7 +15,7 @@
 typedef struct RotorCurrentTypStruct
 {
 	s16 Iq;
-	s16 Id;		
+	s16 Id;
 }RotorCurrentTyp; 
 
 typedef struct MotorParamsTypStruct
@@ -29,12 +29,6 @@ typedef struct MotorParamsTypStruct
     u32 sequence_length;         //注入转换长度
     ADC_HandleTypeDef *CURR_ADC;     //电流采样 ADC
     
-    //电机状态控制值----------------------------------------------//
-    u8 loop_mode;
-    PIDObjTyp PID_torque;        //力矩PID
-    
-    bool bIs_first_measurement; //编码器是否第一次测量
-    
     //PID控制参数值-----------------------------------------------//
     s32 max_speed;
     u16 max_torque;
@@ -46,12 +40,12 @@ typedef struct MotorParamsTypStruct
     s16 previous_cnt;
     s32 previous_overflow_cnt;
     u32 previous_basic_tim_cnt;
-    volatile s32 enc_tim_overflow;//该变量指示UPDATE中断发生的个数，也就是说
-							   	//ENC每转一圈，CPU得到 4* PPR(编码器自身线数，自解)个脉冲，中断发生一次
-							   	//该变量+1.
+    volatile s32 enc_tim_overflow;///< 该变量指示UPDATE中断发生的个数
+    bool bIs_First_Measurement; //编码器是否第一次测量
     
     u16 h_phase_a_offset;          //A相偏移量
     u16 h_phase_b_offset;          //B相偏移量
+
     //======反馈值======//
     RotorCurrentTyp present_current_dq;
     s32 present_speed;

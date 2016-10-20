@@ -43,50 +43,11 @@ s32 MaxOut = SINGLE_MAX*2;
 */
 void MotorPIDInit(void)
 {
-    static s32 max = PWM_PERIOD;
-    
     PIDInit(&SpeedLoopVPID, 8000, 50, 0);
     PIDInit(&SpeedLoopWPID, 3000, 20, 0);
     
     SpeedLoopVPID.outabslimit = &MaxOut;
     SpeedLoopWPID.outabslimit = &MaxOut;
-    
-    MotorParams[0].loop_mode = speed_loop;
-    MotorParams[1].loop_mode = speed_loop;    
-    
-    if(MotorParams[0].loop_mode == speed_torque_loop)
-    {
-        MotorParams[0].PID_torque.kp = 1000;
-        //MotorParams[0].PID_torque.ki = 150;
-        MotorParams[0].PID_torque.ki = 10;
-        MotorParams[0].PID_torque.kd = 0;
-        MotorParams[0].PID_torque.outabslimit = &max;
-        
-        MotorParams[1].PID_torque.kp = 1000;
-        //MotorParams[1].PID_torque.ki = 150;
-        MotorParams[1].PID_torque.ki = 10;
-        MotorParams[1].PID_torque.kd = 0;
-        MotorParams[1].PID_torque.outabslimit = &max;
-        
-        SpeedLoopVPID.kp = 13000;
-        SpeedLoopVPID.ki = 20;
-        SpeedLoopVPID.kd = 0;
-        SpeedLoopWPID.kp = 15000;
-        SpeedLoopWPID.ki = 110;
-        SpeedLoopWPID.kd = 0;
-    }
-    else
-    {
-        MotorParams[0].PID_torque.kp = 15000;
-        MotorParams[0].PID_torque.ki = 100;
-        MotorParams[0].PID_torque.kd = 1;
-        MotorParams[0].PID_torque.outabslimit = &max;
-        
-        MotorParams[1].PID_torque.kp = 15000;
-        MotorParams[1].PID_torque.ki = 100;
-        MotorParams[1].PID_torque.kd = 1;
-        MotorParams[1].PID_torque.outabslimit = &max;
-    }
 }
 
 #ifdef _DEBUG
@@ -131,16 +92,15 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     bool stop_flag;
     s32 outV, outA;
     s32 left_out, right_out;
-    s32 left_dead_zone, right_dead_zone;
 
     static s32 last_outV = 0;
     static s32 last_outA = 0;
     
     GetSpeedKpi();
     
-    stop_flag = abs(omega) < DEGREE(1) && abs(velocity) < 15;
-        // 停止策略
-    if(abs(TargetW) < DEGREE(1) && abs(TargetV) < 15 && stop_flag)
+    stop_flag = abs(omega) < DEGREE(1) && abs(velocity) < 10;
+    // 停止策略
+    if(abs(TargetW) < DEGREE(1) && abs(TargetV) < 10 && stop_flag)
     {
         outA = 0;
         outV = 0;
@@ -149,7 +109,6 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     {
         // 线速度 PID
         outV = PIDRegulatorS32(TargetV<<8, velocity<<8, last_outV, &SpeedLoopVPID);
-        
         
         // 角速度 PID
         outA = PIDRegulatorS32(TargetW>>3, omega>>3, last_outA, &SpeedLoopWPID);

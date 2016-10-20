@@ -148,7 +148,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
     s32 encoder_cnt, encoder_cnt2;
 	s32 temp1;
 	
-	if (!MotorParams[enc_idx].bIs_first_measurement)
+	if (!MotorParams[enc_idx].bIs_First_Measurement)
 	{
 		// 1st reading of overflow counter
 		encoder_Overflow_cnt = MotorParams[enc_idx].enc_tim_overflow;
@@ -189,7 +189,7 @@ void EncCalcRotSpeed(u8 enc_idx, s32* feedback_spd, s32* p_encoder_delta)
 	else
 	{
         MotorParams[enc_idx].previous_basic_tim_cnt = BasicTimer->CNT;
-		MotorParams[enc_idx].bIs_first_measurement = false;
+		MotorParams[enc_idx].bIs_First_Measurement = false;
 		temp1 = 0;
 		MotorParams[enc_idx].enc_tim_overflow = 0;
 		encoder_cnt = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);

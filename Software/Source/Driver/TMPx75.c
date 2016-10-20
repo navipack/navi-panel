@@ -33,7 +33,7 @@
 */
 bool TMP_Init(void)
 {
-    u16 i, temperature;
+    u16 temperature;
     u8 data = 0x60;
     
     SET_ERR(DRV_ERR_TMP_I2C);
@@ -63,7 +63,7 @@ bool TMP_Init(void)
 */
 u8 TMP_GetTemperature(s32 *pdata)
 {
-    u8 tmp, ret;
+    u8 ret;
     u8 data[2];
     ret = ReadBytes(ADDR_TEMPERATURE, data, 2);
     if(ret == HAL_OK)

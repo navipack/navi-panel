@@ -24,37 +24,12 @@
 
 #define FREQ(cnt,hz)  (++(cnt) >= MOTION_PREQ/(hz))
 
-#define FIR_MOVING_AVG_DLY_SIZE 1000
-#define _xHz_CNT 	4
-
-
 extern u8 MotionCmdProcessFlag;
 
-PIDObjTyp ThetaLoopPIDV;
-PIDObjTyp ThetaLoopPIDW;
-PIDObjTyp ThetaLoopPIDMiddleW;
-
-CTwoCarLocation TestTargetLocation;
-CCarLocation TestPresentLocation;
-CCarLocation gSpecifiedDecStartingLocation;
-//CCarLocation gCTargetLocation;
-//CCarLocation gCFartherTargetLocation;
-
-u16 CntXHz = _xHz_CNT;
-
-
 /////////////////// Local Variable ////////////////////////
-//static OS_EVENT* PresentLoactionLock = NULL;
-//static OS_EVENT* PresentLoactionMBox = NULL;
-//static MotionControlMode_TypeDef MotionControlMode = MOTION_POINT_MODE;
 static CSpeedVW TargetSpeed = {0, 0};
 static u8 VW_Update = 0;
-static u32 HeartBeatCount = 0;
-static u8 EnterSpecialDecreasing = 0;
-static s32 LinearVelocity;
-static s32 AngVelocity;
-//static VelocityCurve_Type VelocityCurve;
-//static VelocityCurve_Type HeadCurve;
+
 static bool CarMotionEnable = true;
 
 void MotorParamsInit(void)
@@ -270,11 +245,8 @@ bool IsWheelRest()
 * @param  None
 * @retval None
 */
-//static u8 HeadMode = HEAD_INIT_MODE;
-//static u8 PlatMode = MOTION_VW_MODE;
 void ChassisMovingController()
 {
-    static u16 stop_cnt = 0;
     static bool is_protect = false;
     static CDistanceValue present_posture = {0,0};
     static CSpeedVW present_vw = {0,0};
