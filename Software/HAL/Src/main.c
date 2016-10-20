@@ -140,19 +140,17 @@ void DriverInit(void)
 //    //HeadCurrentCalibration();
 
     // Lidar Communication
-    if(GetCommMode())
+    Comm_Init();
+    if(GlobalParams.commMode == COMM_UART)
     {
-        GlobalParams.commMode = COMM_UART;
         MX_USART3_UART_Init();
         CommUsart_Init(GetCommUartHandle(), &huart3);
     }
     else
     {
-        GlobalParams.commMode = COMM_USB;
         // USB
         MX_USB_DEVICE_Init();
     }
-    Comm_Init();
 
     // I2C Battery and Temperature
     MX_I2C1_Init();
@@ -207,7 +205,7 @@ int main(void)
         UltrsonicTrigTask();
         Comm_BoostTask();
         Comm_TxTask();
-        Contact_detection();
+        //Contact_detection();
         //supply_voltage_detection();
   /* USER CODE END WHILE */
 

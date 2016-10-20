@@ -280,7 +280,7 @@ void ChassisMovingController()
 //#endif
 //    {
 //        stop_cnt = 0;
-//        is_protect = DropAndCollisionSensorHandler(&target_VW, 300); // 碰撞及跌落传感器触发刹车策略
+//        is_protect = DropAndCollisionSensorHandler(&target_VW, 2000); // 碰撞及跌落传感器触发刹车策略
 //    }
     
     if(!is_protect)

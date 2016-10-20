@@ -54,10 +54,15 @@ bool Comm_Init(void)
     
     NaviPack_Init();
     
-    if(GlobalParams.commMode == COMM_UART)
+    if(GetCommMode())
     {
+        GlobalParams.commMode = COMM_UART;
         CommUsart.buffer_size = UART_BUFF_SIZE;
         CommUsart.dma_rx_buffer = UartBuffer;
+    }
+    else
+    {
+        GlobalParams.commMode = COMM_USB;
     }
 
     return true;
