@@ -196,20 +196,13 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 time_threshold)
     NavipackComm.status.dropSensor = drop;
     drop_stop = drop != 0;
     
-    // 保护模式的超时机制，防止一直保护
-    if(is_protect && ++time_cnt > time_threshold)
-    {
-        time_cnt = 0;
-        drop_stop = false;
-        collision_stop = false;
-    }
-    
     if(drop_stop || collision_stop)
     {
-        if(target->sV > 0)
+        if(target->sV > 0 || target->sW != 0)
         {
             is_protect = true;
             target->sV = -500;
+            target->sW = 0;
         }
     }
     else
@@ -219,7 +212,15 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 time_threshold)
             is_protect = false;
             target->sV = 0;
             target->sW = 0;
+            time_cnt = 0;
         }
+    }
+    
+    // 保护模式的超时机制，防止一直保护
+    if(is_protect && ++time_cnt > time_threshold )
+    {
+        target->sV = 0;
+        target->sW = 0;
     }
     
     return is_protect;
