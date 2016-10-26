@@ -49,7 +49,7 @@ void RunFlagHandler(void)
         RunFlag.boost = 1;
     }
 
-    FREQ_FLAG(imu, 500);
+    FREQ_FLAG(imu, IMU_UPDATE_FREQ);
     FREQ_FLAG(led, 2);
     FREQ_FLAG(contact, 500);
     FREQ_FLAG(second, 1);

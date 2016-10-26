@@ -17,7 +17,6 @@
 #include <math.h>
 #include "tim_user.h"
 
-
 /*
 *********************************************************************************************************
 *                                            LOCAL DEFINES
@@ -33,28 +32,10 @@
 #define SENSOR_DEBUG
 #endif
 
-// STOP
-#define	PITCH_ANGLE_TOO_LARGE				(1)		//俯仰角过大，表现为爬坡
-#define ROLL_ANGLE_TOO_LARGE				(2)		//横滚角过大，表现为爬坡
+#define REST_ANGLE_THRESHOLD                DEGREE(CalibrationFactor)
+#define PITCH_ANGLE_THRESHOLD				DEGREE(10)	 //10度
+#define ROLL_ANGLE_THRESHOLD				DEGREE(10)	 //10度
 
-// MOVE BACK
-#define	ACC_FORWARD_TOO_LARGE				(3)		//前向加速度过大，表现为前后碰撞
-#define ACC_LEFT_TOO_LARGE					(4)		//左加速度过大，表现为左右碰撞
-#define ACC_RIGHT_TOO_LARGE					(5)		//左加速度过大，表现为左右碰撞
-
-// DO NOTHING
-#define	ACC_BACKWARD_TOO_LARGE				(6)		//后向加速度过大，表现为前后碰撞
-
-#define ACC_Z_TOO_LARGE						(7)		//垂直加速度过大，表现为抬起
-#define LIGHT_COLLISION						(8)		//挂住空转，表现为微小碰撞，但小车主动轮被抬起空转
-
-#define REST_ANGLE_THRESHOLD                ((u32)DEGREE_QCALC*CalibrationFactor)
-#define PITCH_ANGLE_THRESHOLD				(10 * DEGREE_QCALC)	 //10度
-#define ROLL_ANGLE_THRESHOLD				(10 * DEGREE_QCALC)	 //10度
-#define ACC_X_THRESHOLD						(0.6 * DEGREE_QCALC) //0.3g
-#define ACC_Y_THRESHOLD						(0.6 * DEGREE_QCALC) //0.3g
-#define ACC_Z_THRESHOLD						(-0.5 * DEGREE_QCALC) //0.3g
-#define LIGHT_COLLISION_THRESHOLD			(0.5 * DEGREE_QCALC) //0.5m
 /*
 *********************************************************************************************************
 *                                            GLOBAL VARIABLES
@@ -63,6 +44,7 @@
 IMUFilterInfo	g_SensorSystemStatus = {0};
 
 u32 g_IMUSystermStatus = 0;
+
 /*
 *********************************************************************************************************
 *                                            LOCAL VARIABLES
@@ -95,10 +77,7 @@ static IMUFilterInfo	s_IMU_FilterProcessInfo = {0};
 
 		
 #ifdef SENSOR_DEBUG
-	 IMUDebugInfo 		g_SensorDebug = {0.0};
-	 IMURawDebugInfo	g_SensorRawDebug = {0.0};
      s32 TestG[6];
-     u8 g_MaxDebug[20];
 #endif
 
 /*
@@ -297,11 +276,7 @@ static bool FirstGyroZeroCalibration()
     MPUSensorData imu_data;
     s32 gyro_x = 0, gyro_y = 0, gyro_z = 0;
         
-    #ifdef USE_DMP
-    INVMPU_DmpReadFifo(&imu_data);
-    #else
     INVMPU_ReadGyro(&imu_data);
-    #endif
 
     gyro_y = imu_data.gyro_y * DEGREE_QCALC / GYRO_FSR_CALC;
     gyro_x = imu_data.gyro_x * DEGREE_QCALC / GYRO_FSR_CALC;
@@ -395,5 +370,4 @@ void SensorUpdateTask(void)
     
     //惯导滤波算法
     SensorUpdate_DoubleAxis(SensorSystemPreFilter, &g_SensorSystemStatus);        
-
 }

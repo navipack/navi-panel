@@ -233,8 +233,7 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 time_threshold)
 */
 bool IsWheelRest()
 {
-    if(MotorParams[0].present_speed == 0 && MotorParams[1].present_speed == 0 && //编码器输出判断
-        MotorParams[0].present_current_dq.Iq < 100 && MotorParams[1].present_current_dq.Iq < 100) //电机输出电流判断，毫伏
+    if(MotorParams[0].present_speed == 0 && MotorParams[1].present_speed == 0) //编码器输出判断
     {
         return true;
     }
