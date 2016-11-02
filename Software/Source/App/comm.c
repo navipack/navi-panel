@@ -162,10 +162,10 @@ void Comm_BoostTask(void)
             sizeof(NaviPack_StatusType),
         };
     
-	if(RunFlag.boost)
-	{
+    if(RunFlag.boost)
+    {
         RunFlag.boost = 0;
             
         Comm_PostTxEvent(&head);
-	}
+    }
 }

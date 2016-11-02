@@ -14,69 +14,69 @@
 
 typedef struct
 {
-	u8 deviceAddr;
-	u8 functionCode;
-	u16 startAddr;
-	u32 len;
+    u8 deviceAddr;
+    u8 functionCode;
+    u16 startAddr;
+    u32 len;
 }NacipackProtocolHeader;
 
 typedef struct
 {
-	u16 ultrasound[8];
-	u8 dropSensor;
-	u16 irSensor;
-	u8 collisionSensor;
-	s16 angularPos;
-	s32 leftEncoderPos;      ///<当前左边里程计的积分位置
-	s32 rightEncoderPos;     ///<当前右边里程计的积分位置
-	s32 lineVelocity;
-	s32 angularVelocity;
-	u8 chargeStatus;
-	u8 batteryStatus;
+    u16 ultrasound[8];
+    u8 dropSensor;
+    u16 irSensor;
+    u8 collisionSensor;
+    s16 angularPos;
+    s32 leftEncoderPos;      ///<当前左边里程计的积分位置
+    s32 rightEncoderPos;     ///<当前右边里程计的积分位置
+    s32 lineVelocity;
+    s32 angularVelocity;
+    u8 chargeStatus;
+    u8 batteryStatus;
     u8 pickupStatus;
-	u16 errorState;
+    u16 errorState;
 }ChassisStatusRegister;
 
 typedef struct
 {
-	s32 lineVelocity;
-	s32 angularVelocity;
+    s32 lineVelocity;
+    s32 angularVelocity;
 }ChassisControlRegister;
 
 typedef struct
 {
-	u16 ultrasoundPos;
-	u16 ultrasoundPerspective;
+    u16 ultrasoundPos;
+    u16 ultrasoundPerspective;
 }UltraSound_S;
 
 typedef struct
 {
-	u16 dropSensorPos;
-	u16 dropSensorPerspective;
+    u16 dropSensorPos;
+    u16 dropSensorPerspective;
 }DropSensor_S;
 
 typedef struct
 {
-	u16 irSensoPos;
-	u16 irSensoPerspective;
+    u16 irSensoPos;
+    u16 irSensoPerspective;
 }IrSensor_S;
 
 typedef struct
 {
-	u16 collisionSensorAngle;
-	u16 collisionSensorPerspective;
+    u16 collisionSensorAngle;
+    u16 collisionSensorPerspective;
 }CollisionSensorAngle_S;
 
 typedef struct
 {
-	//超声波传感器
-	UltraSound_S ultrasound[8];
-	//防跌落传感器
-	DropSensor_S dropsensor[8];
-	//红外传感器
-	IrSensor_S irSensor[16];
-	//碰撞传感器
-	CollisionSensorAngle_S collisionSensor[16];
+    //超声波传感器
+    UltraSound_S ultrasound[8];
+    //防跌落传感器
+    DropSensor_S dropsensor[8];
+    //红外传感器
+    IrSensor_S irSensor[16];
+    //碰撞传感器
+    CollisionSensorAngle_S collisionSensor[16];
 }ChassisParamRegister;
 
 #pragma pack(pop)
@@ -102,7 +102,7 @@ typedef struct
 #define FUNC_ID_READ_CONFIG   MCU_PARAM_REG
 #define FUNC_ID_READ_USER     MCU_USER_REG_READ
 #define FUNC_ID_WRITE_USER    MCU_USER_REG_WRITE
-  
+
 typedef ChassisControlRegister NaviPack_CtrlType;
 typedef ChassisStatusRegister NaviPack_StatusType;
 typedef ChassisParamRegister NaviPack_ConfigType;
