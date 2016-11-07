@@ -52,9 +52,9 @@
 /* Private define ------------------------------------------------------------*/
 #define CKTIM_APB1 72000000
 #define CKTIM_APB2 72000000
-#define TIM_FACTOR 2
+#define PWM_ALIGN_FACTOR 2
 #define PWM_PRSC 0
-#define PWM_CNT_FREQ (CKTIM_APB2 / TIM_FACTOR / (PWM_PRSC + 1))
+#define PWM_CNT_FREQ (CKTIM_APB2 / PWM_ALIGN_FACTOR / (PWM_PRSC + 1))
 #define PWM_FREQ 20000
 #define PWM_PERIOD (PWM_CNT_FREQ / PWM_FREQ - 1)
 #define ENCODER_GAP 1024
