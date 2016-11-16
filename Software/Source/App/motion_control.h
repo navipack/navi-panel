@@ -89,20 +89,9 @@ typedef struct HeadTargetTypeStruct
 }HeadTargetType;
 
 void MotionCtrlTask(void);
-void ResetPosLoopCount(void);
 void SetVWValue(s32 v, s32 w, u16 t);
 bool IsWheelRest(void);
-bool PushTargetLocation( const MotionTargetType* value );
 void SetCarMotionEnable(bool b);
-
-extern CCarLocation gCPresentLocation;
-
-void MotorParamsInit(void);
-void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega);
-s32 GetVelocity(void);
-s32 GetOmega(void);
-void EncInit(u8);
-void MotorPIDInit(void);
 
 #endif
 

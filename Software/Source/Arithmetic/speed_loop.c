@@ -18,7 +18,7 @@
 #include "comm.h"
 #include "adc_user.h"
 #include "PID_regulators.h"
-
+#include "AVG_filter.h"
 #include "motor.h"
 
 extern u8 MotionCmdProcessFlag;
@@ -61,6 +61,38 @@ void GetSpeedKpi()
 #else
 #define GetSpeedKpi()
 #endif
+
+/**
+* @brief  获得线速度
+* @param  target_v: 目标线速度，用来预估检测值
+* @retval 线速度，单位：mm/s
+*/
+s32 FMVASpeedFilterArray[2][32];
+AvgFilterInt32Def FMVASpeedFilter[3] = {
+    {FMVASpeedFilterArray[0], 32, 0, 0},
+    {FMVASpeedFilterArray[1], 32, 0, 0},
+};
+
+s32 GetVelocity()
+{
+    s64 velocity;
+    
+    velocity = AVG_Filter_s32(&FMVASpeedFilter[0], 
+        (MotorParams[0].present_speed + MotorParams[1].present_speed) / 2);
+
+    return V_ENC_TO_MM(velocity); //脉冲每秒换算成毫米每秒
+
+}
+
+/**
+* @brief  获得角速度
+* @param  target_w: 目标角速度，用来预估检测值
+* @retval 角速度，单位：倍乘角度，相关宏 DEGREE()
+*/
+s32 GetOmega()
+{
+    return AVG_Filter_s32(&FMVASpeedFilter[1], g_SensorSystemStatus.yaw_anglerate);
+}
 
 void SpeedLoop_SetTargetSpeed(CSpeedVW *s)
 {

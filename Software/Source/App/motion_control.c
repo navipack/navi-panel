@@ -20,7 +20,6 @@
 #include "infrared_drop.h"
 #include "tim_user.h"
 #include "speed_loop.h"
-#include "AVG_filter.h"
 
 #define FREQ(cnt,hz)  (++(cnt) >= MOTION_PREQ/(hz))
 
@@ -32,14 +31,6 @@ static u8 VW_Update = 0;
 
 static bool CarMotionEnable = true;
 
-void MotorParamsInit(void)
-{
-    MotorParams[0].acccumulated_distance = 0;
-    MotorParams[0].accumulated_distance_remainder = 0;
-    
-    MotorParams[1].acccumulated_distance = 0;
-    MotorParams[1].accumulated_distance_remainder = 0;
-}
 
 /**
 * @brief  一阶滞后融合滤波
@@ -51,39 +42,6 @@ void MotorParamsInit(void)
 s32 FirstFilterS32(s32 target_value, s32 sample_value, s16 factor)
 {    
     return ((s64)target_value * factor + (s64)sample_value * (1000 - factor))/1000;    
-}
-
-/**
-* @brief  获得线速度
-* @param  target_v: 目标线速度，用来预估检测值
-* @retval 线速度，单位：mm/s
-*/
-s32 FMVASpeedFilterArray[3][32];
-AvgFilterInt32Def FMVASpeedFilter[3] = {
-    {FMVASpeedFilterArray[0], 32, 0, 0},
-    {FMVASpeedFilterArray[1], 32, 0, 0},
-    {FMVASpeedFilterArray[2], 32, 0, 0},
-};
-
-s32 GetVelocity()
-{
-    s64 velocity;
-    
-    velocity = AVG_Filter_s32(&FMVASpeedFilter[0], 
-        (MotorParams[0].present_speed + MotorParams[1].present_speed) / 2);
-
-    return V_ENC_TO_MM(velocity); //脉冲每秒换算成毫米每秒
-
-}
-
-/**
-* @brief  获得角速度
-* @param  target_w: 目标角速度，用来预估检测值
-* @retval 角速度，单位：倍乘角度，相关宏 DEGREE()
-*/
-s32 GetOmega()
-{
-    return AVG_Filter_s32(&FMVASpeedFilter[1], g_SensorSystemStatus.yaw_anglerate);
 }
 
 /**

@@ -22,8 +22,8 @@ void LedToggle(void)
 }
 
 /**
-* @brief  激光雷达供电控制io口
-* @param  on：on时对PD4设置高电平，使激光雷达得电
+* @brief  激光雷达供电控制
+* @param  on：true 上电，false 断电
 * @retval None
 */
 void LidarPower(bool on)
@@ -39,8 +39,8 @@ void LidarPower(bool on)
 }
 
 /**
-* @brief  超声波模块供电控制io口
-* @param  on：on时对PD1设置高电平，超声波模块得电
+* @brief  超声波模块供电控制
+* @param  on：true 上电，false 断电
 * @retval None
 */
 void UltrasonicPower(bool on)
@@ -56,8 +56,8 @@ void UltrasonicPower(bool on)
 }
 
 /**
-* @brief  地侧模块供电控制io口
-* @param  on：on时对PC5设置高电平，地侧模块得电
+* @brief  地侧模块供电控制
+* @param  on：true 上电，false 断电
 * @retval None
 */
 void DropPower(bool on)
@@ -74,7 +74,7 @@ void DropPower(bool on)
 
 /**
 * @brief  电机驱动芯片使能
-* @param  on：on时对PD0设置高电平，得电
+* @param  on：true 上电，false 断电
 * @retval None
 */
 void ChassisMotorDriverEnable(bool on)

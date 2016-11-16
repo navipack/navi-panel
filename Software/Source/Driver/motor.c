@@ -32,6 +32,12 @@ void Motor_Init(void)
     MotorParams[0].dead_zone_move = PWM(0);
     MotorParams[1].dead_zone = PWM(16);
     MotorParams[1].dead_zone_move = PWM(0);
+    
+    MotorParams[0].acccumulated_distance = 0;
+    MotorParams[0].accumulated_distance_remainder = 0;
+    
+    MotorParams[1].acccumulated_distance = 0;
+    MotorParams[1].accumulated_distance_remainder = 0;
 }
 
 void Motor_Output(u8 idx, s32 out, u8 stop_flag)
