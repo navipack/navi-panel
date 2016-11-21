@@ -108,10 +108,10 @@ void SpeedLoop(void)
 
 /**
 * @brief  角速度线速度环
-* @param  TargetV:  目标线速度，用来预估检测值
-* @param  TargetW:  目标角速度，用来预估检测值
-* @param  velocity: 采集的线速度
-* @param  omega:    采集的角速度
+* @param  TargetV:  目标线速度
+* @param  TargetW:  目标角速度
+* @param  velocity: 当前线速度
+* @param  omega:    当前角速度
 * @retval 
 */
 s32 Left_debug = 0;
