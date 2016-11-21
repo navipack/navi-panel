@@ -21,9 +21,6 @@
 #include "AVG_filter.h"
 #include "motor.h"
 
-extern u8 MotionCmdProcessFlag;
-//CMotionXYCmdMsg PreMotionCmdMsg;
-
 static PIDObjTyp SpeedLoopWPID;
 static PIDObjTyp SpeedLoopVPID;
 static CSpeedVW LoopTargetSpeed = {0, 0};

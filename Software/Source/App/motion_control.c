@@ -23,8 +23,6 @@
 
 #define FREQ(cnt,hz)  (++(cnt) >= MOTION_PREQ/(hz))
 
-extern u8 MotionCmdProcessFlag;
-
 /////////////////// Local Variable ////////////////////////
 static CSpeedVW TargetSpeed = {0, 0};
 static u8 VW_Update = 0;
@@ -117,55 +115,48 @@ void SetCarMotionEnable(bool b)
 /**
 * @brief  传感器触发的停止动作处理
 * @param  target: 输出速度值
-* @param  time_threshold : 保护超时门限
+* @param  freq  : 调用频率
 * @retval 是否处于危险保护状态
 */
-bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 time_threshold)
+bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 freq)
 {
     static bool drop_stop = false, collision_stop = false, is_protect = false;
     static u8 last_collision = 0;
-    static u16 time_cnt = 0;
+    static bool last_collision_stop=0;
+    static u16 time_cnt = 0, dealy_cnt = 0;
+    
     u8 drop, collision;
     
     // 跌落传感器数据
-    //drop = 0;
     drop = InfraredDrop_GetData();
-    //drop = UltrasonicDrop_GetData();
-    
-    // 碰撞传感器数据
-    collision = 0;
-    
-    if(last_collision == collision)
-    {
-        if(collision != 0)
-        {
-            collision_stop = true;
-            NavipackComm.status.collisionSensor  = collision;
-        }
-        else
-        {
-            collision_stop = false;
-            NavipackComm.status.collisionSensor = 0;
-        }
-    }
-    last_collision = collision;
-    
-    // 跌落
+    drop_stop = (drop != 0);
     NavipackComm.status.dropSensor = drop;
-    drop_stop = drop != 0;
     
+   // 碰撞传感器数据 
+    collision = 0;
+    collision_stop = (collision != 0);
+    NavipackComm.status.collisionSensor = collision;
+    
+#ifdef _DEBUG
+    if(UserReg.debug_flag & 0x02)
+    {
+        return false;
+    }
+#endif
+
     if(drop_stop || collision_stop)
     {
-        if(target->sV > 0 || target->sW != 0)
+        //if(present_vw->sV > 0 || present_vw->sW != 0 )
         {
             is_protect = true;
-            target->sV = -500;
+            target->sV = -150;
             target->sW = 0;
+            dealy_cnt = 0;     
         }
     }
-    else
+    else if(is_protect)
     {
-        if(is_protect)
+        if(++dealy_cnt > abs(20*freq/target->sV)) // 20mm
         {
             is_protect = false;
             target->sV = 0;
@@ -173,14 +164,22 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 time_threshold)
             time_cnt = 0;
         }
     }
-    
+
     // 保护模式的超时机制，防止一直保护
-    if(is_protect && ++time_cnt > time_threshold )
+    if(is_protect)
     {
-        target->sV = 0;
-        target->sW = 0;
+        if(time_cnt > 3*freq) // 3s
+        {
+            // Sensor error
+            target->sV = 0;
+            target->sW = 0;
+        }
+        else
+        {
+            time_cnt++;
+        }
     }
-    
+
     return is_protect;
 }
 
@@ -205,6 +204,7 @@ bool IsWheelRest()
 */
 void ChassisMovingController()
 {
+    static u16 stop_cnt;
     static bool is_protect = false;
     static CDistanceValue present_posture = {0,0};
     static CSpeedVW present_vw = {0,0};
@@ -227,18 +227,10 @@ void ChassisMovingController()
         Navipack_UnlockReg(REG_ID_STATUS);
     }
 
-//#ifdef _DEBUG
-//    if(UserReg.debug_flag & 0x02)
-//    {
-//        is_protect = false;
-//    }
-//    else if(FREQ(stop_cnt, 500))
-//#else
 //    if(FREQ(stop_cnt, 500))
-//#endif
 //    {
 //        stop_cnt = 0;
-//        is_protect = DropAndCollisionSensorHandler(&target_VW, 2000); // 碰撞及跌落传感器触发刹车策略
+//        is_protect = DropAndCollisionSensorHandler(&target_vw, 500); // 碰撞及跌落传感器触发刹车策略
 //    }
     
     if(!is_protect)
