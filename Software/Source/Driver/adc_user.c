@@ -29,7 +29,6 @@ void ADC_Init(ADC_HandleTypeDef* hadc)
 
 /**
 * @brief  采集校准参数
-* @param  None
 * @retval None
 * @note：采集1.2V输入电压，与理论1.2v比较，防止供电电压不稳导致ADC采集的电压不正确
 */
@@ -40,10 +39,9 @@ s32 ADC_GetRef(void)
 }
 
 /**
-* @brief  ADC采集电压值
-* @param  rank：DMA通道口
-* @retval None
-* @return 该通道口的电压值
+* @brief  ADC1 采集电压值
+* @param  rank：目标编号
+* @retval 目标 ADC 采样值
 */
 s32 ADC_GetValue(u8 rank)
 {
@@ -56,8 +54,8 @@ s32 ADC_GetValue(u8 rank)
 
 /**
 * @brief  地侧ADC采集电压值
-* @param  idx :DMA通道口
-* @retval None
+* @param  idx: 目标编号
+* @retval 目标 ADC 采样值
 * @note　因为地侧的ADC只用到四个，单独开来
 */
 s32 ADC_GetDropValue(u8 idx)

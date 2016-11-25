@@ -21,9 +21,9 @@
 
 MotorParamsTyp MotorParams[2] = 
 {
-    /*ENC_TIMER--PWM_TIMER--encoder_gap_num--pair_num--encoder_dir--sequence_length--CURR_ADC*/
-    {&htim2,     &htim1,    ENCODER_GAP,   4,       0,          0,              &hadc1},
-    {&htim3,     &htim1,    ENCODER_GAP,   4,       1,          0,              &hadc2},
+    /*ENC_TIMER--PWM_TIMER--encoder_gap_num--pair_num--encoder_dir--CURR_ADC*/
+    {&htim2,     &htim1,    ENCODER_GAP,     4,        0,           &hadc1},
+    {&htim3,     &htim1,    ENCODER_GAP,     4,        1,           &hadc2},
 };
 
 void Motor_Init(void)

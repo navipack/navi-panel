@@ -35,13 +35,22 @@ bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data)
 */
 bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 data)
 {
-    if( (pframe->offset >= size) //当接收的数据长度超过接收SIZE
-        || ((data == FRAMEHEAD) && (pframe->lastByte == FRAMEHEAD)) )
+    if(data == FRAMEHEAD && pframe->lastByte == FRAMEHEAD)
     {
         //复位
         pframe->offset = 0;
         pframe->recvFlag = true;
         pframe->checkSum = 0;
+        return false;
+    }
+    
+    if(pframe->offset >= size) //当接收的数据长度超过接收SIZE
+    {
+        //复位
+        pframe->offset = 0;
+        pframe->recvFlag = true;
+        pframe->checkSum = 0;
+        pframe->errorCount++;
         return false;
     }
 
@@ -61,6 +70,7 @@ bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 da
             pframe->offset = 0;
             pframe->checkSum = 0;
             pframe->recvFlag = false;
+            pframe->errorCount++;
             return false;
         }
     }

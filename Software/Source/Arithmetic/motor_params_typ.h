@@ -26,7 +26,6 @@ typedef struct MotorParamsTypStruct
     u16 encoder_gap_num;          //编码器线数
     u8  pair_num;                //极对数
     u8  encoder_dir;             //编码器方向
-    u32 sequence_length;         //注入转换长度
     ADC_HandleTypeDef *CURR_ADC;     //电流采样 ADC
     
     //PID控制参数值-----------------------------------------------//
