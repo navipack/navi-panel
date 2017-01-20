@@ -101,18 +101,14 @@ void BasicTIM_IRQHandler(TIM_HandleTypeDef *htim)
     s32 encoder_delta;
     
     BasicTimOverflowCount++;
-    //SetTestPoint(true);
 
     if(FREQ(cnt1, ENCODER_SAMPLING_FREQ))
     {
         cnt1 = 0;
-        //GET_SPEED_HZ(2, &MotorParams[2].present_speed, &MotorParams[2].ObserveSpeed);
     }
     
     if(cnt1 < 2)
     {
-        //获取当前位置信息
-        //MotorParams[cnt4].present_position = GET_ABS_POS(cnt4);
         //获得当前脉冲速度
         EncGetMachanicalSpeed(cnt1, &MotorParams[cnt1].present_speed, &encoder_delta);
 

@@ -26,15 +26,6 @@
 /* Private typedef -----------------------------------------------------------*/
 
 /* PERIPHERAL SET-UP ---------------------------------------------------------*/
-#define MINIMUM_MECHANICAL_SPEED_RPM  (u32)1  		//RPM
-#define MAXIMUM_MECHANICAL_SPEED_RPM  (u32)50000 	//RPM
-
-#define MINIMUM_MECHANICAL_SPEED(idx)  	(u32)(MINIMUM_MECHANICAL_SPEED_RPM*4*MotorParams[idx].encoder_gap_num/60)
-#define MAXIMUM_MECHANICAL_SPEED(idx)  	(u32)(MAXIMUM_MECHANICAL_SPEED_RPM*4*MotorParams[idx].encoder_gap_num/60)
-
-#define MAX_SPD_OVERFLOW(idx)		(ENCODER_SAMPLING_FREQ/MINIMUM_MECHANICAL_SPEED(idx))	
-
-#define COUNTER_RESET(a, idx)  		(u16)(( ((s32)(a)*4*MotorParams[idx].encoder_gap_num/360) - 1)/MotorParams[idx].pair_num)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -47,10 +38,9 @@ s16 ENC_Calc_Rot_Speed(void);
 * @param  None
 * @retval None
 */
-void EncInitForChannel0(u16 align)
+void EncInitForChannel0()
 {
     u8 idx = 0;
-    EncResetEncoder(idx, align);
     MotorParams[idx].turns_count = 0;
     MotorParams[idx].enc_tim_overflow = 0;
 }
@@ -60,10 +50,9 @@ void EncInitForChannel0(u16 align)
 * @param  None
 * @retval None
 */
-void EncInitForChannel1(u16 align)
+void EncInitForChannel1()
 {
     u8 idx = 1;
-    EncResetEncoder(idx, align);
     MotorParams[idx].turns_count = 0;
     MotorParams[idx].enc_tim_overflow = 0;
 }
@@ -73,10 +62,9 @@ void EncInitForChannel1(u16 align)
 * @param  None
 * @retval None
 */
-void EncInitForChannel2(u16 align)
+void EncInitForChannel2()
 {
     u8 idx = 2;
-    EncResetEncoder(idx, align);
     MotorParams[idx].turns_count = 0;
     MotorParams[idx].enc_tim_overflow = 0;
 }
@@ -91,34 +79,9 @@ void EncInit(u8 idx)
 {
     switch(idx)
     {
-    case 0: EncInitForChannel0(MotorParams[0].alignment_angle);  break;
-    case 1: EncInitForChannel1(MotorParams[1].alignment_angle);  break;
+    case 0: EncInitForChannel0();  break;
+    case 1: EncInitForChannel1();  break;
     }
-}
-
-
-/**
-* @brief  Write the encoder counter with the value corresponding to
-*         ALIGNMENT_ANGLE
-* @param  None
-* @retval None
-*/
-void EncResetEncoder(u8 enc_idx, u16 align)
-{
-	if( align == 0 )
-	{
-		__HAL_TIM_SET_COUNTER(MotorParams[enc_idx].ENC_TIMER, 0);
-	}
-	else
-	{
-		//Reset counter 
-		if(MotorParams[enc_idx].encoder_dir == 0)
-			__HAL_TIM_SET_COUNTER(MotorParams[enc_idx].ENC_TIMER, COUNTER_RESET(align, enc_idx));
-		else
-			__HAL_TIM_SET_COUNTER(MotorParams[enc_idx].ENC_TIMER, 4*MotorParams[enc_idx].encoder_gap_num - COUNTER_RESET(align, enc_idx));
-	}
-
-	MotorParams[enc_idx].enc_dec_pluse = __HAL_TIM_GET_COUNTER(MotorParams[enc_idx].ENC_TIMER);
 }
 
 #ifdef _DEBUG

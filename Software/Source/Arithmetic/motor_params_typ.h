@@ -24,7 +24,6 @@ typedef struct MotorParamsTypStruct
     TIM_HandleTypeDef *ENC_TIMER;         //编码器时钟
     TIM_HandleTypeDef *PWM_TIMER;         //PWM输出时钟
     u16 encoder_gap_num;          //编码器线数
-    u8  pair_num;                //极对数
     u8  encoder_dir;             //编码器方向
     ADC_HandleTypeDef *CURR_ADC;     //电流采样 ADC
     
@@ -53,7 +52,6 @@ typedef struct MotorParamsTypStruct
     s64 present_position;
 
 	//电机初始化参数-----------------------------------------------//
-	s16 alignment_angle;
     s32 dead_zone;
     s32 dead_zone_move;
 }MotorParamsTyp;
