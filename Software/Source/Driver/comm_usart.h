@@ -19,7 +19,7 @@ typedef struct{
     u32 tx_tc_flag;
     u8* dma_rx_buffer;
     u16 buffer_size;
-    bool tx_idle;
+    u32 offset;
 }CommUsartType;
 
 void CommUsart_Init(CommUsartType *hcomm, UART_HandleTypeDef *huart);

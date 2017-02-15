@@ -12,6 +12,7 @@
 
 /**
 * @brief  通讯用串口初始化
+* @param  hcomm : 句柄
 * @param  huart : 串口句柄
 * @retval None
 */
@@ -19,7 +20,7 @@ void CommUsart_Init(CommUsartType *hcomm, UART_HandleTypeDef *huart)
 {
     hcomm->huart = huart;
     hcomm->tx_tc_flag = __HAL_DMA_GET_TC_FLAG_INDEX(huart->hdmatx);
-    hcomm->tx_idle = false;
+    hcomm->offset = 0;
     
     __HAL_UART_CLEAR_OREFLAG(huart);
     //__HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
@@ -30,52 +31,51 @@ void CommUsart_Init(CommUsartType *hcomm, UART_HandleTypeDef *huart)
 
 /**
 * @brief  通讯串口发送数据
-* @param  data    : 数据指针
-* @param  len     : 数据长度
-* @param  timeout : 超时，单位 ms，0 为一直等待
-* @retval None
+* @param  hcomm : 句柄
+* @param  data  : 数据指针
+* @param  len   : 数据长度
+* @retval 1 发送成功
 */
 u8 CommUsart_SendData(CommUsartType *hcomm, u8 *data, u16 len)
 {
-    if(USER_UART_Transmit_DMA(hcomm->huart, data, len, hcomm->tx_tc_flag) == HAL_OK)
-    {
-        hcomm->tx_idle = false;
-        return true;
-    }
-
-    return false;
+    return USER_UART_Transmit_DMA(hcomm->huart, data, len, hcomm->tx_tc_flag) == HAL_OK;
 }
 
+/**
+* @brief  通讯串口是否允许发送
+* @param  hcomm : 句柄
+* @retval true 可以发送
+*/
 bool CommUsart_CanSendData(CommUsartType *hcomm)
 {
-    if(__HAL_DMA_GET_FLAG(hcomm->huart->hdmatx, hcomm->tx_tc_flag))
+    if(hcomm->huart->hdmatx->State != HAL_DMA_STATE_BUSY 
+        || __HAL_DMA_GET_FLAG(hcomm->huart->hdmatx, hcomm->tx_tc_flag))
     {
-        hcomm->tx_idle = true;
+        return true;
     }
-    return hcomm->tx_idle;
+    return false;
 }
 
 /**
 * @brief  通讯串口接收数据
-* @param  pbuf : 返回接收到的数据指针
-* @param  plen : 返回接收到的数据长度
+* @param  hcomm : 句柄
+* @param  pbuf  : 返回接收到的数据指针
+* @param  plen  : 返回接收到的数据长度
 * @retval 是否有数据
 */
 bool CommUsart_RecvData(CommUsartType *hcomm, u8 **pbuf, u32* plen)
 {
-    static u32 offset = 0;
-    
     u16 data_cnt = hcomm->buffer_size - __HAL_DMA_GET_COUNTER(hcomm->huart->hdmarx);
-    *pbuf = &hcomm->dma_rx_buffer[offset];
-    if(data_cnt < offset)
+    *pbuf = &hcomm->dma_rx_buffer[hcomm->offset];
+    if(data_cnt < hcomm->offset)
     {
-        *plen = hcomm->buffer_size - offset;
-        offset = 0;
+        *plen = hcomm->buffer_size - hcomm->offset;
+        hcomm->offset = 0;
     }
     else
     {
-        *plen = data_cnt - offset;
-        offset = data_cnt;
+        *plen = data_cnt - hcomm->offset;
+        hcomm->offset = data_cnt;
     }
     
     if(*plen > 0) return true;
@@ -83,6 +83,12 @@ bool CommUsart_RecvData(CommUsartType *hcomm, u8 **pbuf, u32* plen)
     return false;
 }
 
+/**
+* @brief  使能串口接收中断
+* @param  hcomm : 句柄
+* @param  en    : true 使能
+* @retval None
+*/
 void CommUsart_EnableIT(CommUsartType *hcomm, bool en)
 {
     if(en)
