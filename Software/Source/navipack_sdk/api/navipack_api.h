@@ -12,11 +12,6 @@
 
 #include "navipack_def.h"
 
-#define REG_ID_STATUS   0
-#define REG_ID_COTROL   1
-#define REG_ID_CONFIG   2
-#define REG_ID_USER     3
-
 bool NaviPack_Init(void);
 bool NaviPack_TxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head);
 bool NaviPack_RxProcessor(NavipackComm_Type *comm, u8 data);
