@@ -11,7 +11,6 @@
 #define  __NAVIPACK_TRANSPORT_LAYER_H__
 
 #include "navipack_def.h"
-#include "navipack_api.h"
 
 /** @defgroup PACK_FLAG_define 传输层打包模式标志
   * @{
@@ -22,8 +21,6 @@
   * @}
   */
 
-bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data);
-bool Navipack_TransportPacking(NavipackComm_Type *comm, u8 *in_buf, u16 len, u8 pack_flag);
 bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 data);
 bool TransportPacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 *in_buf, u16 len, u8 pack_flag);
 

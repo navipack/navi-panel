@@ -15,17 +15,6 @@
 #define FRAMETAIL 0x55
 
 /**
-* @brief  NaviPack 解包函数
-* @param  comm : 通讯对象
-* @param  data : 接收的数据，单 byte
-* @retval 是否成功解包
-*/
-bool Navipack_TransportUnpacking(NavipackComm_Type *comm, u8 data)
-{
-    return TransportUnpacking(&comm->rxFrame, comm->rxBuffer, comm->rxSize, data);
-}
-
-/**
 * @brief  传输层解包函数
 * @param  pframe : 数据帧对象
 * @param  buffer : 解包结果存储缓冲区
@@ -110,19 +99,6 @@ bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 da
     pframe->lastByte = data;
 
     return false;
-}
-
-/**
-* @brief  NaviPack 打包函数
-* @param  comm      : 通讯对象
-* @param  in_buf    : 打包数据指针
-* @param  len       : 打包数据长度
-* @param  pack_flag : 打包模式 @ref PACK_FLAG_define 按 bit 设置
-* @retval 打包错误则返回 false
-*/
-bool Navipack_TransportPacking(NavipackComm_Type *comm, u8 *in_buf, u16 len, u8 pack_flag)
-{
-    return TransportPacking(&comm->txFrame, comm->txBuffer, comm->txSize, in_buf, len, pack_flag);
 }
 
 /**

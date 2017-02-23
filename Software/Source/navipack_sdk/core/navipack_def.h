@@ -15,6 +15,12 @@
 #define CHASSIS_PLATFORM
 #include "navipack_protocol.h"
 
+#define REG_ID_STATUS   0
+#define REG_ID_COTROL   1
+#define REG_ID_CONFIG   2
+#define REG_ID_USER     3
+#define REG_ID_UID      4
+
 typedef struct
 {
     bool recvFlag;      ///< 接收标志
