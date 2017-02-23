@@ -4,7 +4,7 @@
   * Description        : Main program body
   ******************************************************************************
   *
-  * Copyright (c) 2016 STMicroelectronics International N.V. 
+  * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -68,7 +68,6 @@
 #include "motor.h"
 #include "global_defines.h"
 #include "contact_detection.h"
-#include "v_detection.h"
 
 /* USER CODE END Includes */
 
@@ -206,7 +205,6 @@ int main(void)
         Comm_BoostTask();
         Comm_TxTask();
         //Contact_detection();
-        //supply_voltage_detection();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

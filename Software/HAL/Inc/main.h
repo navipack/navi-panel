@@ -4,7 +4,7 @@
   * Description        : This file contains the common defines of the application
   ******************************************************************************
   *
-  * Copyright (c) 2016 STMicroelectronics International N.V. 
+  * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -89,10 +89,8 @@
 #define DROP_IN1_GPIO_Port GPIOB
 #define DROP_IN2_Pin GPIO_PIN_1
 #define DROP_IN2_GPIO_Port GPIOB
-#define FLT2B_1_Pin GPIO_PIN_7
-#define FLT2B_1_GPIO_Port GPIOE
-#define FLT3B_1_Pin GPIO_PIN_8
-#define FLT3B_1_GPIO_Port GPIOE
+#define FALUT1_Pin GPIO_PIN_7
+#define FALUT1_GPIO_Port GPIOE
 #define MOTOR1_PWM1_Pin GPIO_PIN_9
 #define MOTOR1_PWM1_GPIO_Port GPIOE
 #define MOTOR1_PWM2_Pin GPIO_PIN_11
@@ -105,16 +103,14 @@
 #define LED_GPIO_Port GPIOE
 #define SPI_CS_Pin GPIO_PIN_12
 #define SPI_CS_GPIO_Port GPIOB
-#define FLT2B_2_Pin GPIO_PIN_14
-#define FLT2B_2_GPIO_Port GPIOB
+#define FALUT2_Pin GPIO_PIN_14
+#define FALUT2_GPIO_Port GPIOB
 #define MPU_6500_INT_Pin GPIO_PIN_8
 #define MPU_6500_INT_GPIO_Port GPIOD
 #define STBYB_1_Pin GPIO_PIN_9
 #define STBYB_1_GPIO_Port GPIOD
 #define STBYB_2_Pin GPIO_PIN_10
 #define STBYB_2_GPIO_Port GPIOD
-#define FLT3B_2_Pin GPIO_PIN_10
-#define FLT3B_2_GPIO_Port GPIOA
 #define MOTOR1_ENCODER_A_Pin GPIO_PIN_15
 #define MOTOR1_ENCODER_A_GPIO_Port GPIOA
 #define US_TRIGGER_Pin GPIO_PIN_10
