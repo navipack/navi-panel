@@ -106,10 +106,10 @@ void SetVWValue(s32 v, s32 w, u16 t)
     VW_Update = 1;
 }
 
-void SetCarMotionEnable(bool b)
-{
-    CarMotionEnable = b;
-}
+//void SetCarMotionEnable(bool b)
+//{
+//    CarMotionEnable = b;
+//}
 
 
 /**
@@ -184,6 +184,24 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 freq)
 }
 
 /**
+* @brief  错误检查
+* @retval 错误状态
+*/
+u32 MotionCheckErr(void)
+{
+#ifdef _DEBUG
+    if(UserReg.debug_flag & 0x01)
+    {
+        return 0;
+    }
+    else
+#endif
+    {
+        return CHECK_ERR(DRV_ERR_COMM_TIMEOUT | DRV_ERR_TILT);
+    }
+}
+
+/**
 * @brief  判断主动轮是否在转动
 * @param  None
 * @retval 是否转动
@@ -240,12 +258,17 @@ void ChassisMovingController()
             VW_Update = 0;
             target_vw = TargetSpeed;
         }
-        
-        if(!CarMotionEnable)
-        {
-            target_vw.sV = 0;
-            target_vw.sW = 0;
-        }
+    }
+    
+    if(MotionCheckErr())
+    {
+        ChassisMotorDriverEnable(false);
+        target_vw.sV = 0;
+        target_vw.sW = 0;
+    }
+    else
+    {
+        ChassisMotorDriverEnable(true);
     }
     
     SpeedLoop_SetTargetSpeed(&target_vw);

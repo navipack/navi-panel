@@ -37,7 +37,6 @@ void ResetHeartbeat(void)
     if(CHECK_ERR( DRV_ERR_COMM_TIMEOUT))
     {
         CLEAR_ERR(DRV_ERR_COMM_TIMEOUT);
-        SetCarMotionEnable(true);
     }
 }
 
@@ -106,36 +105,20 @@ void SystemSuperviseTask(void)		//100Hz
     }
     else
     {
-#ifdef _DEBUG
-        if(UserReg.debug_flag & 0x01)
-        {
-            ResetHeartbeat();
-        }
-        else
-#endif
-        {
-            SET_ERR(DRV_ERR_COMM_TIMEOUT);
-            SetCarMotionEnable(false);
-        }
+        SET_ERR(DRV_ERR_COMM_TIMEOUT);
     }
 
-#ifdef _DEBUG
     if(!(UserReg.debug_flag & 0x01))
-#endif
     {
         // 倾斜角度
         if(abs(g_SensorSystemStatus.fused_pitch_angle) > DEGREE(12)
             || abs(g_SensorSystemStatus.fused_roll_angle) > DEGREE(15))
         {
             SET_ERR( DRV_ERR_TILT );
-            ChassisMotorDriverEnable(false);
-            SetCarMotionEnable(false);
         }
         else if(CHECK_ERR( DRV_ERR_TILT))
         {
             CLEAR_ERR( DRV_ERR_TILT );
-            ChassisMotorDriverEnable(true);
-            SetCarMotionEnable(true);
         }
     }
     
