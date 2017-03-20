@@ -47,7 +47,7 @@ s32 ADC_GetValue(u8 rank)
 {
     if(rank < RANK_MAX)
     {
-      return ((s32)ADC1_Buffer[rank]) * 1000 / RefValue;
+        return ((s32)ADC1_Buffer[rank]) * 1000 / RefValue;
     }
     return 0;
 }
@@ -62,7 +62,7 @@ s32 ADC_GetDropValue(u8 idx)
 {
     if(idx < RANK_DROP_MAX)
     {
-        return ADC_GetValue(RANK_DROP1 + idx);
+        return ADC_GetValue((RANK_DROP_MAX-1) - idx);
     }
     return 0;
 }

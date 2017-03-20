@@ -23,7 +23,7 @@
 /* Exported variables --------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
-#define V_FACTOR 672
+#define V_FACTOR 1440
 #define V_FULL_FACTOR 10000
 #define V_ENC_TO_MM(_v) ((_v) * V_FACTOR / V_FULL_FACTOR)
 

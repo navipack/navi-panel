@@ -22,16 +22,16 @@
 MotorParamsTyp MotorParams[2] = 
 {
     /*ENC_TIMER--PWM_TIMER--encoder_gap_num--encoder_dir--CURR_ADC*/
-    {&htim2,     &htim1,    ENCODER_GAP,     0,           &hadc1},
-    {&htim3,     &htim1,    ENCODER_GAP,     1,           &hadc2},
+    {&htim2,     &htim1,    ENCODER_GAP,     1,           &hadc1},
+    {&htim3,     &htim1,    ENCODER_GAP,     0,           &hadc2},
 };
 
 void Motor_Init(void)
 {
-    MotorParams[0].dead_zone = PWM(16);
-    MotorParams[0].dead_zone_move = PWM(0);
-    MotorParams[1].dead_zone = PWM(16);
-    MotorParams[1].dead_zone_move = PWM(0);
+    MotorParams[0].dead_zone = PWM(66);
+    MotorParams[0].dead_zone_move = PWM(48);
+    MotorParams[1].dead_zone = PWM(66);
+    MotorParams[1].dead_zone_move = PWM(48);
     
     MotorParams[0].acccumulated_distance = 0;
     MotorParams[0].accumulated_distance_remainder = 0;
