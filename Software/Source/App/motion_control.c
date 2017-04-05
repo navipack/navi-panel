@@ -146,12 +146,27 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 freq)
 
     if(drop_stop || collision_stop)
     {
-        //if(present_vw->sV > 0 || present_vw->sW != 0 )
+        if(target->sV > 0 || target->sW != 0 )
         {
             is_protect = true;
-            target->sV = -150;
-            target->sW = 0;
             dealy_cnt = 0;     
+        }
+        
+        if(is_protect)
+        {
+            // 保护模式的超时机制，防止一直保护
+            if(time_cnt > 3*freq) // 3s
+            {
+                // Sensor error
+                target->sV = 0;
+                target->sW = 0;
+            }
+            else
+            {
+                time_cnt++;
+                target->sV = -150;
+                target->sW = 0;
+            }
         }
     }
     else if(is_protect)
@@ -162,21 +177,6 @@ bool DropAndCollisionSensorHandler(CSpeedVW *target, u16 freq)
             target->sV = 0;
             target->sW = 0;
             time_cnt = 0;
-        }
-    }
-
-    // 保护模式的超时机制，防止一直保护
-    if(is_protect)
-    {
-        if(time_cnt > 3*freq) // 3s
-        {
-            // Sensor error
-            target->sV = 0;
-            target->sW = 0;
-        }
-        else
-        {
-            time_cnt++;
         }
     }
 
@@ -245,11 +245,11 @@ void ChassisMovingController()
         Navipack_UnlockReg(REG_ID_STATUS);
     }
 
-//    if(FREQ(stop_cnt, 500))
-//    {
-//        stop_cnt = 0;
-//        is_protect = DropAndCollisionSensorHandler(&target_vw, 500); // 碰撞及跌落传感器触发刹车策略
-//    }
+    if(FREQ(stop_cnt, 500))
+    {
+        stop_cnt = 0;
+        is_protect = DropAndCollisionSensorHandler(&target_vw, 500); // 碰撞及跌落传感器触发刹车策略
+    }
     
     if(!is_protect)
     {
