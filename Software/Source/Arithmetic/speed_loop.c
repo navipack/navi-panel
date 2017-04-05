@@ -135,10 +135,8 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
     
     stop_flag = abs(omega) < DEGREE(1) && abs(velocity) < 10;
     // 停止策略
-    if(abs(TargetW) < DEGREE(1) && abs(TargetV) < 10 && stop_flag)
+    if(TargetW == 0 && TargetV == 0 && stop_flag)
     {
-        outA = 0;
-        outV = 0;
         loop_en = false;
     }
     
@@ -170,6 +168,11 @@ void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega
         {
             outV = 2*(-SINGLE_MAX) - outA;              
         }
+    }
+    else
+    {
+        outA = 0;
+        outV = 0;
     }
     
     left_out = (outV - outA) / 2; //限幅后计算输出值

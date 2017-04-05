@@ -262,13 +262,8 @@ void ChassisMovingController()
     
     if(MotionCheckErr())
     {
-        ChassisMotorDriverEnable(false);
         target_vw.sV = 0;
         target_vw.sW = 0;
-    }
-    else
-    {
-        ChassisMotorDriverEnable(true);
     }
     
     SpeedLoop_SetTargetSpeed(&target_vw);
