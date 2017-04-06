@@ -24,7 +24,7 @@
 #define SUPERVISE_PREQ  100
 
 static u32 Heartbeat = 0;
-#define HeartbeatTimeOut (Heartbeat > SUPERVISE_PREQ*300/1000) //300ms
+#define HeartbeatTimeOut (Heartbeat > SUPERVISE_PREQ*1000/1000) //1s
 
 /**
 * @brief  心跳恢复重置

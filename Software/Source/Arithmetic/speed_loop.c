@@ -20,6 +20,7 @@
 #include "PID_regulators.h"
 #include "AVG_filter.h"
 #include "motor.h"
+#include "Encoder.h"
 
 static PIDObjTyp SpeedLoopWPID;
 static PIDObjTyp SpeedLoopVPID;
@@ -58,6 +59,26 @@ void GetSpeedKpi()
 #else
 #define GetSpeedKpi()
 #endif
+
+/**
+* @brief  编码器采样及数据处理
+* @param  idx: 轮编号
+* @retval None
+*/
+void SpeedSampling(u8 idx)
+{
+    s32 encoder_delta;
+    
+    MotorParamsTyp *pm = &MotorParams[idx];
+    
+    //获得当前脉冲速度
+    EncGetMachanicalSpeed(idx, &pm->present_speed, &encoder_delta);
+
+    // 计算积累移动距离
+    encoder_delta = encoder_delta * V_FACTOR + pm->accumulated_distance_remainder;
+    pm->acccumulated_distance += encoder_delta / V_FULL_FACTOR;
+    pm->accumulated_distance_remainder = encoder_delta % V_FULL_FACTOR;
+}
 
 /**
 * @brief  获得线速度

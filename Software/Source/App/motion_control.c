@@ -222,12 +222,16 @@ bool IsWheelRest()
 */
 void ChassisMovingController()
 {
+    static u8 sample_idx = 0;
     static u16 stop_cnt;
     static bool is_protect = false;
     static CDistanceValue present_posture = {0,0};
     static CSpeedVW present_vw = {0,0};
     static CSpeedVW target_vw = {0,0};
     static NaviPack_StatusType* status = &NavipackComm.status;
+    
+    SpeedSampling(sample_idx);
+    sample_idx ^= 0x01;
     
     present_vw = GlobalParams.presentVW;
     

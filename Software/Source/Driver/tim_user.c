@@ -10,7 +10,6 @@
 
 #include "tim_user.h"
 #include "math_lib.h"
-#include "Encoder.h"
 #include "speed_loop.h"
 #include "global_defines.h"
 #include "motion_control.h"
@@ -92,37 +91,17 @@ u32 GetIntervalTimeUs(u32 *last_capture_cnt, u32 *last_cnt)
 * @param  curve: 曲线参数
 * @retval None
 */
-u32 BasicRunTime[4];
 void BasicTIM_IRQHandler(TIM_HandleTypeDef *htim)
 {
-	static u32 cnt1 = 0;
 	static u32 cnt2 = 0;
     
     s32 encoder_delta;
     
     BasicTimOverflowCount++;
-
-    if(FREQ(cnt1, ENCODER_SAMPLING_FREQ))
-    {
-        cnt1 = 0;
-    }
-    
-    if(cnt1 < 2)
-    {
-        //获得当前脉冲速度
-        EncGetMachanicalSpeed(cnt1, &MotorParams[cnt1].present_speed, &encoder_delta);
-
-        // 计算积累移动距离
-        encoder_delta = encoder_delta * V_FACTOR + MotorParams[cnt1].accumulated_distance_remainder;
-        MotorParams[cnt1].acccumulated_distance += encoder_delta / V_FULL_FACTOR;
-        MotorParams[cnt1].accumulated_distance_remainder = encoder_delta % V_FULL_FACTOR;
-    }
     
     if(FREQ(cnt2, MOTION_PREQ))
     {
         cnt2 = 0;
         SpeedLoop();
     }
-    
-    BasicRunTime[cnt1] = (u64)BasicTimer->CNT * 1000000 / BASIC_TIM_CNT_FREQ;
 }

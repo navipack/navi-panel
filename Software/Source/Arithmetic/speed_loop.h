@@ -35,5 +35,6 @@ void MotorPIDInit(void);
 void AngularVelocityController(s32 TargetV, s32 TargetW, s32 velocity, s32 omega);
 void SpeedLoop_SetTargetSpeed(CSpeedVW *s);
 void SpeedLoop(void);
+void SpeedSampling(u8 idx);
 
 #endif
