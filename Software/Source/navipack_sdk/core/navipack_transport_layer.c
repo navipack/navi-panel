@@ -7,6 +7,16 @@
 * @attention Copyright (C) 2016 Inmotion Corporation
 ******************************************************************************
 */
+
+/** @addtogroup Navipack_MCU_SDK
+* @{
+*/
+
+/** @defgroup Transport_Layer Transport layer
+* @brief Navipack Transport layer
+* @{
+*/
+
 #include "navipack_transport_layer.h"
 
 //传输层协议标志
@@ -26,60 +36,52 @@ bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 da
 {
     if(data == FRAMEHEAD && pframe->lastByte == FRAMEHEAD)
     {
-        //复位
         pframe->offset = 0;
-        pframe->recvFlag = true;
         pframe->checkSum = 0;
-        return false;
-    }
-    
-    if(pframe->offset >= size) //当接收的数据长度超过接收SIZE
-    {
-        //复位
-        pframe->offset = 0;
         pframe->recvFlag = true;
-        pframe->checkSum = 0;
-        pframe->errorCount++;
         return false;
-    }
-
-    if( (data == FRAMETAIL) && (pframe->lastByte == FRAMETAIL) && (pframe->recvFlag) )
-    { 
-        //收到结束符
-        pframe->offset -= 2;
-        pframe->checkSum -= (FRAMETAIL + buffer[pframe->offset]);
-
-        if(pframe->checkSum == buffer[pframe->offset])
-        {                                       
-            pframe->recvFlag = false;
-            return true;
-        }
-        else
-        {
-            pframe->offset = 0;
-            pframe->checkSum = 0;
-            pframe->recvFlag = false;
-            pframe->errorCount++;
-            return false;
-        }
     }
 
     if(pframe->recvFlag)
     {
-        if(pframe->ctrlFlag)
-        {
-            if( (data == FRAMEHEAD) || (data == FRAMETAIL) || (data == FRAMECTRL) )
+        // 收到结束符
+        if(data == FRAMETAIL && pframe->lastByte == FRAMETAIL)
+        { 
+            pframe->recvFlag = false;
+            pframe->offset -= 2;
+            pframe->checkSum -= (FRAMETAIL + buffer[pframe->offset]);
+
+            if(pframe->checkSum == buffer[pframe->offset])
             {
-                buffer[pframe->offset++] = data;
-                pframe->ctrlFlag = false;
-                pframe->checkSum += data;
-                data = FRAMECTRL;
+                return true;
             }
             else
             {
                 pframe->offset = 0;
                 pframe->checkSum = 0;
+                pframe->errorCount++;
+                return false;
+            }
+        }
+
+        // 控制字
+        if(pframe->ctrlFlag)
+        {
+            pframe->ctrlFlag = false;
+
+            if(data == FRAMEHEAD || data == FRAMETAIL || data == FRAMECTRL)
+            {
+                buffer[pframe->offset++] = data;
+                pframe->checkSum += data;
+                data = FRAMECTRL;
+            }
+            else
+            {
+                // 复位
+                pframe->offset = 0;
+                pframe->checkSum = 0;
                 pframe->recvFlag = false;
+                pframe->errorCount++;
             }
         }
         else
@@ -93,6 +95,16 @@ bool TransportUnpacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 da
                 buffer[pframe->offset++] = data;
                 pframe->checkSum += data;
             }
+        }
+
+        // 数据长度超过 SIZE
+        if(pframe->offset >= size)
+        {
+            // 复位
+            pframe->offset = 0;
+            pframe->checkSum = 0;
+            pframe->recvFlag = false;
+            pframe->errorCount++;
         }
     }
 
@@ -163,3 +175,11 @@ bool TransportPacking(TransportFrame_Type *pframe, u8* buffer, u16 size, u8 *in_
 
     return true;
 }
+
+/**
+* @}
+*/
+
+/**
+* @}
+*/

@@ -7,6 +7,16 @@
 * @attention Copyright (C) 2016 Inmotion Corporation
 ******************************************************************************
 */
+
+/** @addtogroup Navipack_MCU_SDK
+* @{
+*/
+
+/** @defgroup Session_Layer Session layer
+* @brief Navipack Session layer
+* @{
+*/
+
 #include <string.h>
 #include "navipack_session_layer.h"
 #include "navipack_api.h"
@@ -149,26 +159,9 @@ bool NaviPack_SessionRxProcessor(NavipackComm_Type *comm, u8 data)
 }
 
 /**
-* @brief  通讯发送数据处理函数
-* @param  comm : 通讯对象
-* @param  head : 接收数据，单 byte
-* @retval 是否成功处理了数据包
+* @}
 */
-bool NaviPack_SessionTxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head)
-{
-    switch(head->functionCode)
-    {
-    case FUNC_ID_READ_STATUS:
-        return RegisterRead(comm, head, 0, (u8*)&comm->status, sizeof(comm->status), REG_ID_STATUS);
-    case FUNC_ID_READ_CONTROL:
-        return RegisterRead(comm, head, 0, (u8*)&comm->control, sizeof(comm->control), REG_ID_COTROL);
-    case FUNC_ID_READ_CONFIG:
-        return RegisterRead(comm, head, 0, (u8*)&comm->config, sizeof(comm->config), REG_ID_CONFIG);
-    case FUNC_ID_WRITE_CONTROL:
-        break;
-    default:
-        return false;
-    }
-    
-    return true;
-}
+
+/**
+* @}
+*/

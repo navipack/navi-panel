@@ -9,7 +9,6 @@
 ******************************************************************************
 */
 #include "navipack_api.h"
-#include "navipack_session_layer.h"
 
 // 引入需要的头文件
 #include "comm_usart.h"
@@ -90,9 +89,17 @@ bool NaviPack_TxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head)
     case FUNC_ID_READ_USER:
         // 用户寄存器数据发送
         return RegisterRead(comm, head, 0, (u8*)&UserReg, sizeof(UserReg), REG_ID_USER);
-    default:
-        return NaviPack_SessionTxProcessor(comm, head);
+    case FUNC_ID_READ_STATUS:
+        return RegisterRead(comm, head, 0, (u8*)&comm->status, sizeof(comm->status), REG_ID_STATUS);
+    case FUNC_ID_READ_CONTROL:
+        return RegisterRead(comm, head, 0, (u8*)&comm->control, sizeof(comm->control), REG_ID_COTROL);
+    case FUNC_ID_READ_CONFIG:
+        return RegisterRead(comm, head, 0, (u8*)&comm->config, sizeof(comm->config), REG_ID_CONFIG);
+    case FUNC_ID_WRITE_CONTROL:
+        break;
     }
+
+    return false;
 }
 
 /**

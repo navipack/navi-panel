@@ -9,8 +9,11 @@
 */
 #ifndef  __NAVIPACK_API_H__
 #define  __NAVIPACK_API_H__
+/** @addtogroup MCU_SDK_API
+* @{
+*/
 
-#include "navipack_def.h"
+#include "navipack_session_layer.h"
 
 bool NaviPack_Init(void);
 bool NaviPack_TxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head);
@@ -18,4 +21,7 @@ bool NaviPack_RxProcessor(NavipackComm_Type *comm, u8 data);
 bool Navipack_LockReg(u8 reg_id);
 void Navipack_UnlockReg(u8 reg_id);
 
+/**
+* @}
+*/
 #endif
