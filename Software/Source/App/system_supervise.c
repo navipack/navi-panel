@@ -108,18 +108,15 @@ void SystemSuperviseTask(void)		//100Hz
         SET_ERR(DRV_ERR_COMM_TIMEOUT);
     }
 
-    if(!(UserReg.debug_flag & 0x01))
-    {
         // 倾斜角度
-        if(abs(g_SensorSystemStatus.fused_pitch_angle) > DEGREE(12)
-            || abs(g_SensorSystemStatus.fused_roll_angle) > DEGREE(15))
-        {
-            SET_ERR( DRV_ERR_TILT );
-        }
-        else if(CHECK_ERR( DRV_ERR_TILT))
-        {
-            CLEAR_ERR( DRV_ERR_TILT );
-        }
+    if(abs(g_SensorSystemStatus.fused_pitch_angle) > DEGREE(12)
+        || abs(g_SensorSystemStatus.fused_roll_angle) > DEGREE(15))
+    {
+        SET_ERR( DRV_ERR_TILT );
+    }
+    else if(CHECK_ERR( DRV_ERR_TILT))
+    {
+        CLEAR_ERR( DRV_ERR_TILT );
     }
     
     // 外部测温

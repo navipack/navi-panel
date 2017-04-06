@@ -42,7 +42,7 @@ s32 MaxOut = SINGLE_MAX*2;
 void MotorPIDInit(void)
 {
     PIDInit(&SpeedLoopVPID, 5000, 40, 0);
-    PIDInit(&SpeedLoopWPID, 2200, 20, 0);
+    PIDInit(&SpeedLoopWPID, 3500, 30, 0);
     
     SpeedLoopVPID.outabslimit = &MaxOut;
     SpeedLoopWPID.outabslimit = &MaxOut;
