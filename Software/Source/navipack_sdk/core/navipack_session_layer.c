@@ -120,9 +120,7 @@ static void RxProcessor(NavipackComm_Type *comm, NaviPack_HeadType *head, u16 le
 {
     if(head->deviceAddr == NAVIPACK_SLAVE_ID)
     {
-        if((head->functionCode == FUNC_ID_WRITE_CONTROL 
-            || head->functionCode == FUNC_ID_WRITE_USER) 
-            && head->len != len - sizeof(NaviPack_HeadType))
+        if(!Navipack_CheckLength(head, len))
         {
             return;
         }
